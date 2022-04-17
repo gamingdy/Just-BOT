@@ -12,4 +12,9 @@ async def on_ready():
     print("Bot started")
 
 
+cog_list = ["commands.cogs.user_slow"]
+
+for cog in cog_list:
+    bot.load_extension(cog)
+
 bot.run(TOKEN)
