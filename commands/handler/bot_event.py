@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import sqlite3
 import asyncio
+import time
 
 
 class EventHandler(commands.Cog):
@@ -11,6 +12,11 @@ class EventHandler(commands.Cog):
 
     async def user_slowmode(self, channel, user, delay):
         await channel.set_permissions(user, send_messages=False)
+        self.db.cursor().execute(
+            "UPDATE slowmode_info SET last_slowmode=(?) WHERE channel_id=(?) AND user_id=(?)",
+            (round(time.time()), channel.id, user.id),
+        )
+        self.db.commit()
         await asyncio.sleep(delay)
         await channel.set_permissions(user, send_messages=None)
 

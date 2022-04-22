@@ -39,7 +39,6 @@ class ManageSlowmode(commands.Cog):
                 "INSERT INTO slowmode_info (channel_id,user_id,delay) VALUES (?,?,?)",
                 (channel.id, target_list[0][user_nb], slowmode_delay),
             )
-            await channel.set_permissions(user, send_messages=None)
             user_nb += 1
             await bot_status.edit_original_message(
                 content=f"Permissions updated for {user_nb}/{len(target_list[1])}"
