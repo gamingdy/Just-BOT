@@ -64,11 +64,16 @@ class ManageSlowmode(commands.Cog):
         user_nb = 0
         for user in target_list[1]:
             await channel.set_permissions(user, overwrite=None)
+
+            self.db.cursor().execute(
+                "DELETE FROM slowmode_info WHERE channel_id=(?) AND user_id=(?)",
+                (channel.id, target_list[0][user_nb]),
+            )
             user_nb += 1
             await bot_status.edit_original_message(
                 content=f"Permissions updated for {user_nb}/{len(target_list[1])}"
             )
-
+        self.db.commit()
         await bot_status.edit_original_message(
             content=f"Slowmode off for {len(target_list[1])} users"
         )
