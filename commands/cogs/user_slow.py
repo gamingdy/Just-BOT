@@ -19,7 +19,7 @@ class ManageSlowmode(commands.Cog):
         )
 
     @slowmode_commands.command()
-    async def enable_slowmode(
+    async def enable(
         self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
     ):
         if isinstance(target, discord.role.Role):
@@ -50,9 +50,7 @@ class ManageSlowmode(commands.Cog):
         )
 
     @slowmode_commands.command()
-    async def disable_slowmode(
-        self, ctx, target: typing.Union[discord.User, discord.Role]
-    ):
+    async def disable(self, ctx, target: typing.Union[discord.User, discord.Role]):
         if isinstance(target, discord.role.Role):
             target_list = await self.get_role_user(target)
 
