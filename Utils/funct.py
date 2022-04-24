@@ -8,14 +8,18 @@ def verify_db():
         "channel_id"    INTEGER,
         "user_id"   INTEGER,
         "delay" INTEGER,
-        "last_slowmode" INTEGER
+        "last_slowmode" INTEGER,
+        "channel_name"  TEXT,
+        "user_name_discriminator"   TEXT
     );
     """
 
     db = sqlite3.connect("data/bot_db.db")
     curs = db.cursor()
     try:
-        curs.execute("SELECT channel_id,user_id,delay,last_slowmode FROM slowmode_info")
+        curs.execute(
+            "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info"
+        )
     except sqlite3.OperationalError:
         print("Database error")
         print("Try to create table in database")
