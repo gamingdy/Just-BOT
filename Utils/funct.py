@@ -1,12 +1,14 @@
 import sqlite3
+import os
 
-def verify_db()
+
+def verify_db():
     sql_request = """
     CREATE TABLE "slowmode_info" (
-    	"channel_id"	INTEGER,
-    	"user_id"	INTEGER,
-    	"delay"	INTEGER,
-    	"last_slowmode"	INTEGER
+        "channel_id"    INTEGER,
+        "user_id"   INTEGER,
+        "delay" INTEGER,
+        "last_slowmode" INTEGER
     );
     """
 
@@ -27,5 +29,13 @@ def verify_db()
             curs.execute(sql_request)
         db.commit()
 
-
     db.close()
+
+
+def load_cog(path, bot):
+    for content in os.listdir(path):
+        if os.path.isdir(f"{path}/{content}"):
+            load_cog(f"{path}/{content}", bot)
+        else:
+            if content.endswith(".py"):
+                bot.load_extension(f"{path}/{content}"[:-3].replace("/", "."))
