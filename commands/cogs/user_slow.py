@@ -86,6 +86,23 @@ class ManageSlowmode(commands.Cog):
             content=f"Slowmode off for {len(target_list[1])} users"
         )
 
+    @slowmode_commands.command()
+    async def list(self, ctx):
+        channel = ctx.channel
+        list_user = (
+            self.db.cursor()
+            .execute("SELECT * FROM slowmode_info WHERE channel_id=(?)", (channel.id,))
+            .fetchall()
+        )
+        channel_info = f"#{list_user[0][4]} ({list_user[0][0]})"
+        emb_descriptor = ""
+        message = "{}: {} --> {} \n"
+        for key, user in enumerate(list_user):
+            emb_descriptor += message.format(key + 1, user[5], user[2])
+        final_message = channel_info + "\n" + emb_descriptor
+
+        await ctx.respond(final_message)
+
 
 def setup(bot):
     bot.add_cog(ManageSlowmode(bot))
