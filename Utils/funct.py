@@ -1,5 +1,21 @@
 import sqlite3
 import os
+import discord
+from random import randint
+
+
+def create_embed(title, description=None, color=None, img=None):
+    embed = discord.Embed()
+    embed.title = title
+    embed.description = description
+    embed.colour = (
+        discord.Colour.from_rgb(randint(0, 255), randint(0, 255), randint(0, 255))
+        if not color
+        else color
+    )
+    if img:
+        embed.set_image(url=img)
+    return embed
 
 
 def verify_db():
