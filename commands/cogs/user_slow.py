@@ -135,7 +135,7 @@ class ManageSlowmode(commands.Cog):
             else:
                 await self.add_user_in_field(emb_message, list_user, field_value)
         else:
-            pass
+            emb_message.description = "**No slowmode users in this channel**"
 
         await ctx.respond(embed=emb_message)
 
