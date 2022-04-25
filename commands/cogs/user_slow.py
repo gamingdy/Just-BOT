@@ -4,6 +4,8 @@ from discord.commands import SlashCommandGroup
 import typing
 import sqlite3
 
+from Utils.funct import create_embed
+
 
 class ManageSlowmode(commands.Cog):
     def __init__(self, bot):
@@ -17,6 +19,22 @@ class ManageSlowmode(commands.Cog):
             [user.id for user in role_object.members],
             [user for user in role_object.members],
         )
+
+    async def add_user_in_field(
+        self, emb_message, list_user, field_value, bin_message=None, user_info=None
+    ):
+        for keys, user in enumerate(list_user):
+            if keys < 5:
+                emb_message.add_field(
+                    name=user[5],
+                    value=field_value.format(user[2]),
+                    inline=False,
+                )
+            if bin_message:
+                bin_message += user_info.format(
+                    keys + 1, user[5], field_value.format(user[2])
+                )
+        return bin_message
 
     @slowmode_commands.command()
     async def enable(
@@ -91,17 +109,35 @@ class ManageSlowmode(commands.Cog):
         channel = ctx.channel
         list_user = (
             self.db.cursor()
-            .execute("SELECT * FROM slowmode_info WHERE channel_id=(?)", (channel.id,))
+            .execute(
+                "SELECT * FROM slowmode_info WHERE channel_id=(?) ORDER BY delay DESC",
+                (channel.id,),
+            )
             .fetchall()
         )
-        channel_info = f"#{list_user[0][4]} ({list_user[0][0]})"
-        emb_descriptor = ""
-        message = "{}: {} --> {} \n"
-        for key, user in enumerate(list_user):
-            emb_descriptor += message.format(key + 1, user[5], user[2])
-        final_message = channel_info + "\n" + emb_descriptor
+        my_color = discord.Colour.from_rgb(8, 155, 239)
+        emb_message = create_embed("Slowmode list", color=my_color)
+        emb_message.url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        if list_user:
+            emb_message.description = f"*List of active slowmode in #{list_user[0][4]}*"
+            field_value = "Delay `{}s`"
+            if len(list_user) > 5:
+                bin_message = f"{emb_message.description}\n"
+                user_info = "\n{}: {} | {}"
+                bin_message = await self.add_user_in_field(
+                    emb_message, list_user, field_value, bin_message, user_info
+                )
 
-        await ctx.respond(final_message)
+                emb_message.add_field(
+                    name="_ _",
+                    value="[**More ...**](http://127.0.0.1)",
+                )
+            else:
+                await self.add_user_in_field(emb_message, list_user, field_value)
+        else:
+            pass
+
+        await ctx.respond(embed=emb_message)
 
 
 def setup(bot):
