@@ -33,11 +33,19 @@ class ManageSlowmode(commands.Cog):
             f"Activation of the slowmode for {len(target_list[1])} users..."
         )
         user_nb = 0
-
         for user in target_list[1]:
+            user_info = "{}#{}".format(
+                target_list[1][user_nb].name, target_list[1][user_nb].discriminator
+            )
             self.db.cursor().execute(
-                "INSERT INTO slowmode_info (channel_id,user_id,delay) VALUES (?,?,?)",
-                (channel.id, target_list[0][user_nb], slowmode_delay),
+                "INSERT INTO slowmode_info (channel_id,user_id,delay, channel_name,user_name_discriminator) VALUES (?,?,?,?,?)",
+                (
+                    channel.id,
+                    target_list[0][user_nb],
+                    slowmode_delay,
+                    channel.name,
+                    user_info,
+                ),
             )
             user_nb += 1
             await bot_status.edit_original_message(
