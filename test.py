@@ -9,21 +9,12 @@ elem = curs.execute(
     (chan_id,),
 ).fetchall()
 
+print(elem)
+
 elem_by_page = [elem[i : i + 5] for i in range(0, len(elem), 5)]
 
-page = 0
-while True:
-    print(f"page {page}")
-    print(elem_by_page[page])
-    intpu = input("")
-    if intpu == "1":
-        if page == len(elem_by_page) - 1:
-            continue
-        page += 1
-    else:
-        if page == 0:
-            continue
-        page -= 1
-
+elem_by_page = list(
+    map(lambda l: list(map(lambda i: (f"Delay: {i[0]}", i[1]), l)), elem_by_page)
+)
 
 db.close()
