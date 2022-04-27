@@ -35,9 +35,8 @@ class TestCommand(commands.Cog):
                 )
             )
 
-            generate_page(
-                my_embed, *iter(all_page[0])
-            )
+            generate_page(my_embed, *iter(all_page[0]))
+            my_embed.set_footer(text=f"1/{len(all_page)}")
 
             my_navigation = PageNavigation(len(all_page), all_page, my_embed)
             await ctx.respond(embed=my_embed, view=my_navigation)
