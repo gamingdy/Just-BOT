@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.commands import SlashCommandGroup
 import sqlite3
 
-from Utils.funct import create_embed
+from Utils.funct import create_embed, create_page
 
 
 class TestCommand(commands.Cog):
