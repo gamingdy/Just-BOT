@@ -2,15 +2,14 @@ import discord
 from discord.ext import commands
 from discord.commands import SlashCommandGroup
 import typing
-import sqlite3
 
 from Utils.funct import create_embed
+from config import database
 
 
 class ManageSlowmode(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = sqlite3.connect("data/bot_db.db")
 
     slowmode_commands = SlashCommandGroup("slowmode", "Manage channel slowmode")
 
@@ -55,7 +54,7 @@ class ManageSlowmode(commands.Cog):
             user_info = "{}#{}".format(
                 target_list[1][user_nb].name, target_list[1][user_nb].discriminator
             )
-            self.db.cursor().execute(
+            database.cursor().execute(
                 "INSERT INTO slowmode_info (channel_id,user_id,delay, channel_name,user_name_discriminator) VALUES (?,?,?,?,?)",
                 (
                     channel.id,
@@ -70,7 +69,7 @@ class ManageSlowmode(commands.Cog):
                 content=f"Permissions updated for {user_nb}/{len(target_list[1])}"
             )
 
-        self.db.commit()
+        database.commit()
         await bot_status.edit_original_message(
             content=f"Slowmode on for {len(target_list[1])} users"
         )
@@ -91,7 +90,7 @@ class ManageSlowmode(commands.Cog):
         for user in target_list[1]:
             await channel.set_permissions(user, overwrite=None)
 
-            self.db.cursor().execute(
+            database.cursor().execute(
                 "DELETE FROM slowmode_info WHERE channel_id=(?) AND user_id=(?)",
                 (channel.id, target_list[0][user_nb]),
             )
@@ -99,7 +98,7 @@ class ManageSlowmode(commands.Cog):
             await bot_status.edit_original_message(
                 content=f"Permissions updated for {user_nb}/{len(target_list[1])}"
             )
-        self.db.commit()
+        database.commit()
         await bot_status.edit_original_message(
             content=f"Slowmode off for {len(target_list[1])} users"
         )
@@ -108,7 +107,7 @@ class ManageSlowmode(commands.Cog):
     async def list(self, ctx):
         channel = ctx.channel
         list_user = (
-            self.db.cursor()
+            database.cursor()
             .execute(
                 "SELECT * FROM slowmode_info WHERE channel_id=(?) ORDER BY delay DESC",
                 (channel.id,),

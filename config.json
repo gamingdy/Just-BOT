@@ -1,3 +1,4 @@
 {
-    "TOKEN": "Bot token"
+    "TOKEN": "Bot TOKEN",
+    "database": "path to database file"
 }

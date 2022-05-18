@@ -3,6 +3,8 @@ import os
 import discord
 from random import randint
 
+from config import database
+
 
 def create_embed(title, description=None, color=None, img=None):
     embed = discord.Embed()
@@ -30,8 +32,7 @@ def verify_db():
     );
     """
 
-    db = sqlite3.connect("data/bot_db.db")
-    curs = db.cursor()
+    curs = database.cursor()
     try:
         curs.execute(
             "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info"
@@ -47,9 +48,7 @@ def verify_db():
 
             curs.execute("DROP TABLE slowmode_info")
             curs.execute(sql_request)
-        db.commit()
-
-    db.close()
+        database.commit()
 
 
 def load_cog(path, bot):

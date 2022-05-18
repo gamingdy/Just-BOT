@@ -1,16 +1,15 @@
 import discord
 from discord.ext import commands
 from discord.commands import SlashCommandGroup
-import sqlite3
 
 from Utils.funct import create_embed
 from Utils.create_page import generate_page, PageNavigation
+from config import database
 
 
 class TestCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db = sqlite3.connect("data/bot_db.db")
 
     test_command = SlashCommandGroup("test", "Test command")
 
@@ -18,7 +17,7 @@ class TestCommand(commands.Cog):
     async def test(self, ctx):
         channel = ctx.channel
         element = (
-            self.db.cursor()
+            database.cursor()
             .execute(
                 "SELECT delay,user_name_discriminator,channel_name FROM slowmode_info WHERE channel_id = (?) ORDER BY delay DESC",
                 (channel.id,),
