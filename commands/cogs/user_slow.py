@@ -4,6 +4,7 @@ from discord.commands import SlashCommandGroup
 import typing
 
 from Utils.funct import create_embed
+from Utils.create_page import generate_page, PageNavigation
 from config import database
 
 
@@ -106,37 +107,34 @@ class ManageSlowmode(commands.Cog):
     @slowmode_commands.command()
     async def list(self, ctx):
         channel = ctx.channel
-        list_user = (
+        element = (
             database.cursor()
             .execute(
-                "SELECT * FROM slowmode_info WHERE channel_id=(?) ORDER BY delay DESC",
+                "SELECT delay,user_name_discriminator,channel_name FROM slowmode_info WHERE channel_id = (?) ORDER BY delay DESC",
                 (channel.id,),
             )
             .fetchall()
         )
-        my_color = discord.Colour.from_rgb(8, 155, 239)
-        emb_message = create_embed("Slowmode list", color=my_color)
-        emb_message.url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-        if list_user:
-            emb_message.description = f"*List of active slowmode in #{list_user[0][4]}*"
-            field_value = "Delay `{}s`"
-            if len(list_user) > 5:
-                bin_message = f"{emb_message.description}\n"
-                user_info = "\n{}: {} | {}"
-                bin_message = await self.add_user_in_field(
-                    emb_message, list_user, field_value, bin_message, user_info
-                )
+        my_embed = create_embed("Slowmode list")
+        if element:
+            my_embed.description = f"*List of active slowmode in #{element[0][2]}*"
+            all_page = [element[i : i + 5] for i in range(0, len(element), 5)]
 
-                emb_message.add_field(
-                    name="_ _",
-                    value="[**More ...**](http://127.0.0.1)",
+            all_page = list(
+                map(
+                    lambda l: list(map(lambda i: (f"Delay: {i[0]}", i[1]), l)),
+                    all_page,
                 )
-            else:
-                await self.add_user_in_field(emb_message, list_user, field_value)
+            )
+
+            generate_page(my_embed, *iter(all_page[0]))
+            my_embed.set_footer(text=f"Page 1/{len(all_page)}")
+
+            my_navigation = PageNavigation(len(all_page), all_page, my_embed)
+            await ctx.respond(embed=my_embed, view=my_navigation)
         else:
-            emb_message.description = "**No slowmode users in this channel**"
-
-        await ctx.respond(embed=emb_message)
+            my_embed.description = "**No slowmode users in this channel**"
+            await ctx.respond(embed=my_embed)
 
 
 def setup(bot):
