@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.commands import SlashCommandGroup
 import typing
+import time
 
 from Utils.funct import create_embed
 from Utils.create_page import generate_page, PageNavigation
@@ -36,6 +37,20 @@ class ManageSlowmode(commands.Cog):
                 )
         return bin_message
 
+    async def loading_bar(self, message, pourcentage, prev, last_refresh):
+        pourc = int((pourcentage) * 10)
+        loaded = "🟩"
+        unloaded = "🟥"
+        if prev != pourc:
+            prev = pourc
+            if time.time() - last_refresh > 1:
+                last_refresh = time.time()
+                await message.edit_original_message(
+                    content=(loaded * prev) + (unloaded * (10 - prev))
+                )
+
+        return prev, last_refresh
+
     @slowmode_commands.command()
     async def enable(
         self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
@@ -66,10 +81,6 @@ class ManageSlowmode(commands.Cog):
                 ),
             )
             user_nb += 1
-            await bot_status.edit_original_message(
-                content=f"Permissions updated for {user_nb}/{len(target_list[1])}"
-            )
-
         database.commit()
         await bot_status.edit_original_message(
             content=f"Slowmode on for {len(target_list[1])} users"
@@ -88,6 +99,8 @@ class ManageSlowmode(commands.Cog):
         )
 
         user_nb = 0
+        prev = 0
+        last_refresh = time.time()
         for user in target_list[1]:
             await channel.set_permissions(user, overwrite=None)
 
@@ -96,8 +109,8 @@ class ManageSlowmode(commands.Cog):
                 (channel.id, target_list[0][user_nb]),
             )
             user_nb += 1
-            await bot_status.edit_original_message(
-                content=f"Permissions updated for {user_nb}/{len(target_list[1])}"
+            prev, last_refresh = await self.loading_bar(
+                bot_status, user_nb / len(target_list[1]), prev, last_refresh
             )
         database.commit()
         await bot_status.edit_original_message(
