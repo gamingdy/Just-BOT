@@ -1,11 +1,9 @@
 import discord
 
-from config import TOKEN
+from config import TOKEN, debug_guild
 from Utils.funct import load_cog, verify_db
 
-bot = discord.Bot(
-    intents=discord.Intents.all(), debug_guilds=[703389879706320980, 703008423738081311]
-)
+bot = discord.Bot(intents=discord.Intents.all(), debug_guilds=debug_guild)
 
 
 @bot.event
