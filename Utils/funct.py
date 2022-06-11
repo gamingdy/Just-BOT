@@ -2,6 +2,8 @@ import sqlite3
 import os
 import discord
 from random import randint
+import time
+import asyncio
 
 from config import database
 
@@ -58,3 +60,30 @@ def load_cog(path, bot):
         else:
             if content.endswith(".py"):
                 bot.load_extension(f"{path}/{content}"[:-3].replace("/", "."))
+
+
+async def user_slowmode(channel, user, delay):
+    await channel.set_permissions(user, send_messages=False)
+    database.cursor().execute(
+        "UPDATE slowmode_info SET last_slowmode=(?) WHERE channel_id=(?) AND user_id=(?)",
+        (round(time.time()), channel.id, user.id),
+    )
+    database.commit()
+    await asyncio.sleep(delay)
+    await channel.set_permissions(user, send_messages=None)
+
+
+async def verify_user_slowmode(bot):
+    my_database = database.cursor().execute("SELECT * FROM slowmode_info").fetchall()
+    if my_database:
+        for row in my_database:
+            if row[3]:
+                channel = bot.get_channel(row[0])
+                user = bot.get_user(row[1])
+                slowmode_delay = row[2]
+                last_slowmode = row[3]
+                actual_time = round(time.time())
+                if actual_time - slowmode_delay > last_slowmode:
+                    await user_slowmode(channel, user, 0)
+                else:
+                    await user_slowmode(channel, user, actual_time - slowmode_delay)
