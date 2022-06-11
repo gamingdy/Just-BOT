@@ -16,10 +16,7 @@ class ManageSlowmode(commands.Cog):
     slowmode_commands = SlashCommandGroup("slowmode", "Manage channel slowmode")
 
     async def get_role_user(self, role_object):
-        return (
-            [user.id for user in role_object.members],
-            [user for user in role_object.members],
-        )
+        return [user for user in role_object.members]
 
     async def add_user_in_field(
         self, emb_message, list_user, field_value, bin_message=None, user_info=None
@@ -59,31 +56,36 @@ class ManageSlowmode(commands.Cog):
             target_list = await self.get_role_user(target)
 
         else:
-            target_list = ([target.id], [target])
+            target_list = [target]
         channel = ctx.channel
 
         bot_status = await ctx.respond(
-            f"Activation of the slowmode for {len(target_list[1])} users..."
+            f"Activation of the slowmode for {len(target_list)} users..."
         )
-        user_nb = 0
-        for user in target_list[1]:
-            user_info = "{}#{}".format(
-                target_list[1][user_nb].name, target_list[1][user_nb].discriminator
-            )
-            database.cursor().execute(
-                "INSERT INTO slowmode_info (channel_id,user_id,delay, channel_name,user_name_discriminator) VALUES (?,?,?,?,?)",
-                (
-                    channel.id,
-                    target_list[0][user_nb],
-                    slowmode_delay,
-                    channel.name,
-                    user_info,
-                ),
-            )
-            user_nb += 1
+        channel_slowmode = [
+            user_id[0]
+            for user_id in database.cursor()
+            .execute("SELECT user_id FROM slowmode_info")
+            .fetchall()
+        ]
+        for user in target_list:
+            user_info = "{}#{}".format(user.name, user.discriminator)
+            if user.id in channel_slowmode:
+                pass
+            else:
+                database.cursor().execute(
+                    "INSERT INTO slowmode_info (channel_id,user_id,delay, channel_name,user_name_discriminator) VALUES (?,?,?,?,?)",
+                    (
+                        channel.id,
+                        user.id,
+                        slowmode_delay,
+                        channel.name,
+                        user_info,
+                    ),
+                )
         database.commit()
         await bot_status.edit_original_message(
-            content=f"Slowmode on for {len(target_list[1])} users"
+            content=f"Slowmode on for {len(target_list)} users"
         )
 
     @slowmode_commands.command()
@@ -92,29 +94,29 @@ class ManageSlowmode(commands.Cog):
             target_list = await self.get_role_user(target)
 
         else:
-            target_list = ([target.id], [target])
+            target_list = [target]
         channel = ctx.channel
         bot_status = await ctx.respond(
-            f"Disable slowmode for {len(target_list[1])} users..."
+            f"Disable slowmode for {len(target_list)} users..."
         )
 
         user_nb = 0
         prev = 0
         last_refresh = time.time()
-        for user in target_list[1]:
+        for user in target_list:
             await channel.set_permissions(user, overwrite=None)
 
             database.cursor().execute(
                 "DELETE FROM slowmode_info WHERE channel_id=(?) AND user_id=(?)",
-                (channel.id, target_list[0][user_nb]),
+                (channel.id, user.id),
             )
             user_nb += 1
             prev, last_refresh = await self.loading_bar(
-                bot_status, user_nb / len(target_list[1]), prev, last_refresh
+                bot_status, user_nb / len(target_list), prev, last_refresh
             )
         database.commit()
         await bot_status.edit_original_message(
-            content=f"Slowmode off for {len(target_list[1])} users"
+            content=f"Slowmode off for {len(target_list)} users"
         )
 
     @slowmode_commands.command()
