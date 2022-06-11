@@ -71,7 +71,10 @@ class ManageSlowmode(commands.Cog):
         for user in target_list:
             user_info = "{}#{}".format(user.name, user.discriminator)
             if user.id in channel_slowmode:
-                pass
+                database.cursor().execute(
+                    "UPDATE slowmode_info SET delay=(?) WHERE channel_id=(?) AND user_id=(?)",
+                    (slowmode_delay, channel.id, user.id),
+                )
             else:
                 database.cursor().execute(
                     "INSERT INTO slowmode_info (channel_id,user_id,delay, channel_name,user_name_discriminator) VALUES (?,?,?,?,?)",
