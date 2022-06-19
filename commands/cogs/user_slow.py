@@ -15,9 +15,6 @@ class ManageSlowmode(commands.Cog):
 
     slowmode_commands = SlashCommandGroup("slowmode", "Manage channel slowmode")
 
-    async def get_role_user(self, role_object):
-        return [user for user in role_object.members]
-
     async def add_user_in_field(
         self, emb_message, list_user, field_value, bin_message=None, user_info=None
     ):
@@ -53,7 +50,7 @@ class ManageSlowmode(commands.Cog):
         self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
     ):
         if isinstance(target, discord.role.Role):
-            target_list = await self.get_role_user(target)
+            target_list = target.members
 
         else:
             target_list = [target]
@@ -94,7 +91,7 @@ class ManageSlowmode(commands.Cog):
     @slowmode_commands.command()
     async def disable(self, ctx, target: typing.Union[discord.User, discord.Role]):
         if isinstance(target, discord.role.Role):
-            target_list = await self.get_role_user(target)
+            target_list = target.members
 
         else:
             target_list = [target]
