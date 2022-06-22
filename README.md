@@ -24,7 +24,7 @@ Before launching the bot for the first time, you must edit the file [config.json
 - `debug` --> If you want to launch your bot by activating the `debug_guild` here is an example,otherwise you can leave the default config:
     ```json
     {
-        "debug": [True, [List of guild ids]]
+        "debug": [true, ["List of guild ids"]]
     }
     ```
 
