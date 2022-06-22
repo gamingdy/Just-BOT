@@ -16,5 +16,4 @@ async def on_ready():
 
 verify_db()
 load_cog("commands", bot)
-bot.load_extension("command_test.cog_test")
 bot.run(TOKEN)
