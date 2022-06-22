@@ -1,5 +1,5 @@
 {
     "TOKEN": "Bot TOKEN",
-    "database": "path to database file",
-    "debug": ["debug state: true or false", ["guild ids list"]]
+    "database": "data/bot_db.db",
+    "debug": [false, []]
 }
