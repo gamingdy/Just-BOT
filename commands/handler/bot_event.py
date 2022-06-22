@@ -25,6 +25,21 @@ class EventHandler(commands.Cog):
         if db_row:
             await user_slowmode(channel, author, db_row[0][2])
 
+    @commands.Cog.listener()
+    async def on_application_command_error(self, ctx, error):
+        error = error.original
+        if isinstance(error, commands.MissingPermissions):
+            missing_permissions_list = [
+                f"`{perms.capitalize().replace('_',' ')}`"
+                for perms in error.missing_permissions
+            ]
+
+            await ctx.respond(
+                f"Missing permissions : {','.join(missing_permissions_list)}"
+            )
+        else:
+            await ctx.respond(f"Hmmm {error} occurred")
+
 
 def setup(bot):
     bot.add_cog(EventHandler(bot))
