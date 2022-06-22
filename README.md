@@ -4,7 +4,7 @@
 
 Good evening, welcome on the README of Just-BOT
 
-Just-BOT is a bot discord allowing to realize only one thing ( for the moment ), which is the possibility to put in slowmode one or several users/roles.    
+Just-BOT is a Discord bot allowing to realize only one thing ( for the moment ), which is the possibility to put in slowmode one or several users/roles.   
 
 
 ## Summary
@@ -15,7 +15,7 @@ Just-BOT is a bot discord allowing to realize only one thing ( for the moment ),
 
 ## Configuration
 
-Before launching the bot for the first time, you must edit this file [config.json](https://github.com/gamingdy/Just-BOT/blob/main/config.json)
+Before launching the bot for the first time, you must edit the file [config.json](https://github.com/gamingdy/Just-BOT/blob/main/config.json)
 
 - `TOKEN`  --> The bot token available on [the developer portal](https://discord.com/developers/applications), and if you don't know how to find the token of your bot, [here is a tuto that explains it](https://docs.discordbotstudio.org/setting-up-dbs/finding-your-bot-token)
 
@@ -33,7 +33,7 @@ Before launching the bot for the first time, you must edit this file [config.jso
 
 ## Installation
 
- - You can install the necessary modules by doing :
+ - you can install the necessary packages by doing :
 
 **Linux/Mac** 
 ```
