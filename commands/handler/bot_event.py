@@ -35,10 +35,11 @@ class EventHandler(commands.Cog):
             ]
 
             await ctx.respond(
-                f"Missing permissions : {','.join(missing_permissions_list)}"
+                f"Missing permissions : {','.join(missing_permissions_list)}",
+                ephemeral=True,
             )
         else:
-            await ctx.respond(f"Hmmm {error} occurred")
+            await ctx.respond(f"Hmmm {error} occurred", ephemeral=True)
 
 
 def setup(bot):
