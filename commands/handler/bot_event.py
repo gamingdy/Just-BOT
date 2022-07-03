@@ -50,8 +50,12 @@ class EventHandler(commands.Cog):
             failed_command = ctx.command
             bot_info = await self.bot.application_info()
             owner = bot_info.owner
-            embed_message.description = f"Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the solution 🙃. Here is the problematic command and the error.\n\n- Commands : {failed_command} \n- Error : {error}"
+            embed_message.description = "Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the solution 🙃. Here is the problematic command and the error."
 
+            embed_message.add_field(
+                name="🛠 Command", value=failed_command, inline=False
+            )
+            embed_message.add_field(name="👾 Error", value=error)
             await owner.send(embed=embed_message)
 
 
