@@ -2,7 +2,7 @@ from discord.ext import commands
 
 
 from config import database
-from Utils.funct import user_slowmode
+from Utils.funct import user_slowmode, create_embed
 
 
 class EventHandler(commands.Cog):
@@ -27,15 +27,20 @@ class EventHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_application_command_error(self, ctx, error):
-        error = error.original
-        if isinstance(error, commands.MissingPermissions):
+
+        embed_message = create_embed("AN ERROR OCCURRED 😔")
+        if not isinstance(error.original, commands.MissingPermissions):
+            error = error.original
             missing_permissions_list = [
-                f"`{perms.capitalize().replace('_',' ')}`"
+                f"**{perms.capitalize().replace('_',' ')}**"
                 for perms in error.missing_permissions
             ]
+            embed_message.description = (
+                f"Missing permissions : {','.join(missing_permissions_list)}"
+            )
 
             await ctx.respond(
-                f"Missing permissions : {','.join(missing_permissions_list)}",
+                embed=embed_message,
                 ephemeral=True,
             )
         else:
