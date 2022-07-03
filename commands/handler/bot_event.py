@@ -44,7 +44,15 @@ class EventHandler(commands.Cog):
                 ephemeral=True,
             )
         else:
-            await ctx.respond(f"Hmmm {error} occurred", ephemeral=True)
+            embed_message.description = "Oh, it seems that an unknown error occurred, no worries, a very explicit message has been sent to the dev to solve the problem👌."
+            await ctx.respond(embed=embed_message, ephemeral=True)
+
+            failed_command = ctx.command
+            bot_info = await self.bot.application_info()
+            owner = bot_info.owner
+            embed_message.description = f"Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the solution 🙃. Here is the problematic command and the error.\n\n- Commands : {failed_command} \n- Error : {error}"
+
+            await owner.send(embed=embed_message)
 
 
 def setup(bot):
