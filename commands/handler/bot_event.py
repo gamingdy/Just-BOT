@@ -29,7 +29,7 @@ class EventHandler(commands.Cog):
     async def on_application_command_error(self, ctx, error):
 
         embed_message = create_embed("AN ERROR OCCURRED 😔")
-        if not isinstance(error.original, commands.MissingPermissions):
+        if isinstance(error.original, commands.MissingPermissions):
             error = error.original
             missing_permissions_list = [
                 f"**{perms.capitalize().replace('_',' ')}**"
