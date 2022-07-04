@@ -87,3 +87,15 @@ async def verify_user_slowmode(bot):
                     await user_slowmode(channel, user, 0)
                 else:
                     await user_slowmode(channel, user, actual_time - slowmode_delay)
+
+
+def get_traceback_info(traceback_error):
+    end_of_traceback = traceback_error.index(
+        "\nThe above exception was the direct cause of the following exception:\n\n"
+    )
+    traceback_error = traceback_error[:end_of_traceback]
+    file_name = traceback_error[-2].split(",")[0].split("/")[-1][:-1]
+    line = traceback_error[-2].split(",")[1]
+    bad_code = "".join(traceback_error[-2].split(",")[2:])
+
+    return file_name, line, bad_code

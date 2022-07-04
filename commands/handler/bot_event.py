@@ -3,7 +3,7 @@ import traceback
 import sys
 
 from config import database
-from Utils.funct import user_slowmode, create_embed
+from Utils.funct import user_slowmode, create_embed, get_traceback_info
 
 
 class EventHandler(commands.Cog):
@@ -51,16 +51,10 @@ class EventHandler(commands.Cog):
             failed_command = ctx.command
             bot_info = await self.bot.application_info()
             owner = bot_info.owner
-            error_traceback = traceback.format_exception(
+            traceback_error = traceback.format_exception(
                 type(error), error, error.__traceback__
             )
-            end_of_traceback = error_traceback.index(
-                "\nThe above exception was the direct cause of the following exception:\n\n"
-            )
-            error_traceback = error_traceback[:end_of_traceback]
-            file_name = error_traceback[-2].split(",")[0].split("/")[-1][:-1]
-            line = error_traceback[-2].split(",")[1]
-            bad_code = "".join(error_traceback[-2].split(",")[2:])
+            file_name, line, bad_code = get_traceback_info(traceback_error)
 
             embed_message.description = "Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the solution 🙃. Here is the problematic command and the error."
 
