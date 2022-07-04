@@ -1,4 +1,5 @@
 .venv
+.venv_linux
 __pycache__
 bot_db.db
 bot_db.db-journal
