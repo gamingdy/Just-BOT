@@ -9,7 +9,6 @@ from Utils.funct import user_slowmode, create_embed
 class EventHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.bot_info = await bot.application_info()
 
     @commands.Cog.listener()
     async def on_message(self, ctx):
@@ -50,8 +49,8 @@ class EventHandler(commands.Cog):
             await ctx.respond(embed=embed_message, ephemeral=True)
 
             failed_command = ctx.command
-
-            owner = self.bot_info.owner
+            bot_info = await self.bot.application_info()
+            owner = bot_info.owner
             error_traceback = traceback.format_exception(
                 type(error), error, error.__traceback__
             )
