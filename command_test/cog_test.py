@@ -13,6 +13,10 @@ class TestCommand(commands.Cog):
 
     test_command = SlashCommandGroup("test", "Test command")
 
+    @test_command.command()
+    async def test(self, ctx):
+        print(42 / 0)
+
 
 def setup(bot):
     bot.add_cog(TestCommand(bot))
