@@ -1,29 +1,17 @@
 {
-    "Cat 1": [
-        "gshsdhdh",
-        [
-            ""
-        ]
+    "Slowmode": [
+        "List of commands to manage the slowmode, you must do `/slowmode <command_name>` to use them.",
+        {
+            "enable": "Enable slowmode for a user or a role with a delay in sec, in the active channel.",
+            "disable": "Disable slowmode for a user or role, in the active channel.",
+            "list": "List the users in slowmode, in the active channel."
+        }
     ],
-    "fqf": [
-        "sqfgzgzgz",
-        [
-            ""
-        ]
-    ],
-    "gsqgs": [
-        "gsgfsdgz",
-        [
-            ""
-            
-        ]
-    ],
-    "sggsdfg":[
-        "fjqklmfqsj",
-        [
-            ""
-        ]
-        
+    "Tools": [
+        "List of different useful things to know about the bot.",
+        {
+            "ping": "Know the bot's ping.",
+            "help": "Display the bot's help."
+        }
     ]
-
 }
