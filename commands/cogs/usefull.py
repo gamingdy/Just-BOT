@@ -15,7 +15,7 @@ class BotTools(commands.Cog):
 
     async def get_command_group(self, ctx):
         return [
-            group
+            group.capitalize()
             for group in self.commands_help
             if group.lower().startswith(ctx.value.lower())
         ]
@@ -41,7 +41,16 @@ class BotTools(commands.Cog):
         help_embed = fonction.create_embed("Bot commands")
         if command_group:
             if command_group in self.commands_help:
-                help_embed.description = "Command found"
+                category = self.commands_help[command_group]
+                category_command = category[1]
+
+                help_embed.title = "{}'s help".format(command_group.capitalize())
+                help_embed.description = category[0]
+
+                for command in category_command:
+                    help_embed.add_field(
+                        name=command, value=category_command[command], inline=False
+                    )
             else:
                 help_embed.description = f":warning:**The category `{command_group.capitalize()}` is not found**\n\n You can do `/help` to see all available categories"
         else:
