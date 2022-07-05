@@ -40,7 +40,10 @@ class BotTools(commands.Cog):
     async def help(self, ctx, command_group=None):
         help_embed = fonction.create_embed("Bot commands")
         if command_group:
-            help_embed.description = "oui"
+            if command_group in self.commands_help:
+                help_embed.description = "Command found"
+            else:
+                help_embed.description = f":warning:**The category `{command_group.capitalize()}` is not found**\n\n You can do `/help` to see all available categories"
         else:
             help_embed.description = (
                 "You can do `/help <category>` to get help about a category"
