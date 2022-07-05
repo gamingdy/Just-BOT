@@ -20,7 +20,7 @@ class BotTools(commands.Cog):
             if group.lower().startswith(ctx.value.lower())
         ]
 
-    @slash_command(description="Connaître le ping du bot")
+    @slash_command(description="Have the bot ping")
     async def ping(self, ctx):
         ping_start = datetime.now()
         latency = self.bot.latency * 1000
@@ -35,7 +35,7 @@ class BotTools(commands.Cog):
         ping_emb.add_field(name=":robot: BOT", value=bot_ping)
         await ctx.respond(embed=ping_emb)
 
-    @slash_command(description="Affiche le help du bot")
+    @slash_command(description="Displays the bot's help")
     @option("command_group", autocomplete=get_command_group)
     async def help(self, ctx, command_group=None):
         help_embed = fonction.create_embed("Bot commands")
