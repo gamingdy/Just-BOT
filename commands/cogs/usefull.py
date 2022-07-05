@@ -42,7 +42,14 @@ class BotTools(commands.Cog):
         if command_group:
             help_embed.description = "oui"
         else:
-            help_embed.description = "non"
+            help_embed.description = (
+                "You can do `/help <category>` to get help about a category"
+            )
+            for group in self.commands_help:
+                help_embed.add_field(
+                    name=group, value=self.commands_help[group][0], inline=False
+                )
+
         await ctx.respond(embed=help_embed)
 
 
