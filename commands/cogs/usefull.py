@@ -66,9 +66,8 @@ class BotTools(commands.Cog):
 
     @slash_command(description="Displays bot's info")
     async def info(self, ctx):
-        all_guilds = self.bot.guilds
         total_member = []
-        for guilds in all_guilds:
+        for guilds in self.bot.guilds:
             total_member += [
                 members.id
                 for members in guilds.members
@@ -79,7 +78,7 @@ class BotTools(commands.Cog):
         message_embed = fonction.create_embed("Bot's info")
         message_embed.description = (
             "Active in {} guilds with a total of {} unique members".format(
-                len(all_guilds), total_member
+                len(self.bot.guilds), total_member
             )
         )
 
