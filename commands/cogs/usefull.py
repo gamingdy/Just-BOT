@@ -64,6 +64,19 @@ class BotTools(commands.Cog):
 
         await ctx.respond(embed=help_embed)
 
+    @slash_command(description="Displays bot's info")
+    async def info(self, ctx):
+        all_guilds = self.bot.guilds
+        total_member = sum([guilds.member_count for guilds in all_guilds])
+        message_embed = fonction.create_embed("Bot's info")
+        message_embed.description = (
+            "Active in {} guilds with a total of {} members".format(
+                len(all_guilds), total_member
+            )
+        )
+
+        await ctx.respond(embed=message_embed)
+
 
 def setup(bot):
     bot.add_cog(BotTools(bot))
