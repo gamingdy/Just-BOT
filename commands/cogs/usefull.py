@@ -75,11 +75,11 @@ class BotTools(commands.Cog):
             ]
 
         total_member = len(total_member)
-        message_embed = fonction.create_embed("Bot's info")
-        message_embed.description = (
-            "Active in {} guilds with a total of {} unique members".format(
+        message_embed = fonction.create_embed(
+            title="Bot's info",
+            description="Active in {} guilds with a total of {} unique members".format(
                 len(self.bot.guilds), total_member
-            )
+            ),
         )
 
         await ctx.respond(embed=message_embed)
