@@ -103,18 +103,27 @@ class BotTools(commands.Cog):
         date_joined = join_date.date().strftime("%Y/%m/%d")
         time_joined = join_date.time().strftime("%H:%M:%S")
 
+        create_date = user.created_at
+        date_created = create_date.date().strftime("%Y/%m/%d")
+        time_created = create_date.time().strftime("%H:%M:%S")
+
         ui_embed = fonction.create_embed(title=nickname)
 
         ui_embed.add_field(name="Username", value=username)
         ui_embed.add_field(name="Nickname", value=nickname)
 
         ui_embed.add_field(
+            name="Joined at",
+            value="{} at {}".format(date_joined, time_joined),
+        )
+        ui_embed.add_field(
+            name="Created at", value="{} at {}".format(date_created, time_created)
+        )
+
+        ui_embed.add_field(
             name="Common Guild",
             value="{} guilds in common".format(mutual_guild),
             inline=False,
-        )
-        ui_embed.add_field(
-            name="Joined at", value="{} at {}".format(date_joined, time_joined)
         )
 
         await ctx.respond(embed=ui_embed)
