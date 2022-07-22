@@ -15,7 +15,7 @@ class TestCommand(commands.Cog):
 
     @test_command.command()
     async def test(self, ctx):
-        print(42 / 0)
+        await ctx.respond("test")
 
 
 def setup(bot):
