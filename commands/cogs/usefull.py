@@ -97,6 +97,7 @@ class BotTools(commands.Cog):
         user_color = user.accent_color
         username = "{}#{}".format(user.name, user.discriminator)
         nickname = user.display_name
+        avatar_url = user.display_avatar.url
         mutual_guild = len(user.mutual_guilds)
 
         join_date = user.joined_at
@@ -107,7 +108,7 @@ class BotTools(commands.Cog):
         date_created = create_date.date().strftime("%Y/%m/%d")
         time_created = create_date.time().strftime("%H:%M:%S")
 
-        ui_embed = fonction.create_embed(title=nickname)
+        ui_embed = fonction.create_embed(title=nickname, thumbnail=avatar_url)
 
         ui_embed.add_field(name="Username", value=username)
         ui_embed.add_field(name="Nickname", value=nickname)
