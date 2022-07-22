@@ -75,11 +75,17 @@ class BotTools(commands.Cog):
             ]
 
         total_member = len(total_member)
-        message_embed = fonction.create_embed(
-            title="Bot's info",
-            description="Active in {} guilds with a total of {} unique members".format(
-                len(self.bot.guilds), total_member
-            ),
+        message_embed = fonction.create_embed(title="Bot's info")
+
+        message_embed.add_field(name="Total Guilds", value=len(self.bot.guilds))
+        message_embed.add_field(name="Total Members", value=total_member)
+
+        bot_info = await self.bot.application_info()
+        bot_owner = bot_info.owner
+        message_embed.add_field(
+            name="Bot owner",
+            value="{}#{}".format(bot_owner.name, bot_owner.discriminator),
+            inline=False,
         )
 
         await ctx.respond(embed=message_embed)
