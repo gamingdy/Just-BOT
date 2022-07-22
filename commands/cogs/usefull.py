@@ -122,8 +122,7 @@ class BotTools(commands.Cog):
         ui_embed.add_field(name="Activity", value=activity, inline=False)
 
         ui_embed.add_field(
-            name="Joined at",
-            value="{} at {}".format(date_joined, time_joined),
+            name="Joined at", value="{} at {}".format(date_joined, time_joined)
         )
         ui_embed.add_field(
             name="Created at", value="{} at {}".format(date_created, time_created)
