@@ -8,6 +8,7 @@
     - bot_info : info about bot , like uptime or guild number
     - todo : Allows the owner to create a callback for features or bug fixes
     - serverstats : Get information about the server
+    - ui: Show information about user
 
 * ### Update:
     - list channel : Allows you to obtain the list of slowmodes for a specific channel
