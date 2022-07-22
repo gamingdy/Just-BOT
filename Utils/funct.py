@@ -8,7 +8,7 @@ import asyncio
 from config import database
 
 
-def create_embed(title, description=None, color=None, img=None):
+def create_embed(title, description=None, color=None, image=None):
     embed = discord.Embed()
     embed.title = title
     embed.description = description
@@ -17,8 +17,8 @@ def create_embed(title, description=None, color=None, img=None):
         if not color
         else color
     )
-    if img:
-        embed.set_image(url=img)
+    if image:
+        embed.set_image(url=image)
     return embed
 
 
