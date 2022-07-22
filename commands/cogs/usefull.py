@@ -109,10 +109,17 @@ class BotTools(commands.Cog):
         date_created = create_date.date().strftime("%Y/%m/%d")
         time_created = create_date.time().strftime("%H:%M:%S")
 
+        status = user.status
+
+        activity = user.activity.name
+
         ui_embed = fonction.create_embed(title=nickname, thumbnail=avatar_url)
 
         ui_embed.add_field(name="Username", value=username)
         ui_embed.add_field(name="Nickname", value=nickname)
+
+        ui_embed.add_field(name="Presence", value=status, inline=False)
+        ui_embed.add_field(name="Activity", value=activity, inline=False)
 
         ui_embed.add_field(
             name="Joined at",
