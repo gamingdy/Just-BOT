@@ -92,8 +92,9 @@ class BotTools(commands.Cog):
 
     @slash_command(description="Display user information")
     async def ui(self, ctx, member: discord.Member = None):
+        user = member.id if member else ctx.author.id
+        user = ctx.guild.get_member(user)
 
-        user = member if member else ctx.author
         user_color = user.accent_color
         username = "{}#{}".format(user.name, user.discriminator)
         nickname = user.display_name
