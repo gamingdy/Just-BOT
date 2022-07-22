@@ -90,6 +90,35 @@ class BotTools(commands.Cog):
 
         await ctx.respond(embed=message_embed)
 
+    @slash_command(description="Display user information")
+    async def ui(self, ctx, member: discord.Member = None):
+
+        user = member if member else ctx.author
+        user_color = user.accent_color
+        username = "{}#{}".format(user.name, user.discriminator)
+        nickname = user.display_name
+        mutual_guild = len(user.mutual_guilds)
+
+        join_date = user.joined_at
+        date_joined = join_date.date().strftime("%Y/%m/%d")
+        time_joined = join_date.time().strftime("%H:%M:%S")
+
+        ui_embed = fonction.create_embed(title=nickname)
+
+        ui_embed.add_field(name="Username", value=username)
+        ui_embed.add_field(name="Nickname", value=nickname)
+
+        ui_embed.add_field(
+            name="Common Guild",
+            value="{} guilds in common".format(mutual_guild),
+            inline=False,
+        )
+        ui_embed.add_field(
+            name="Joined at", value="{} at {}".format(date_joined, time_joined)
+        )
+
+        await ctx.respond(embed=ui_embed)
+
 
 def setup(bot):
     bot.add_cog(BotTools(bot))
