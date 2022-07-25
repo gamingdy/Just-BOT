@@ -114,13 +114,27 @@ class BotTools(commands.Cog):
         date_created = create_date.date().strftime("%Y/%m/%d")
         time_created = create_date.time().strftime("%H:%M:%S")
 
-        # activity = user.activity.name
+        activity = user.activity
+        if activity:
+            print(activity)
+            print(activity.type)
+            print(type(activity))
+
+            if isinstance(activity, discord.activity.CustomActivity):
+                activity = activity.name
+            elif isinstance(activity, discord.activity.Game):
+                activity = f"Playing {activity.name}"
+            elif isinstance(activity, discord.activity.Streaming):
+                activity = f"Streaming {activity.name} on {activity.platform}, [stream link]({activity.url})"
+        else:
+            activity = "Nothing"
+
         separator = "-" * 20
         embed_description = (
             f"**Username** | {username}",
             f"**Nickname** | {nickname}",
             f"**Status** | {status}",
-            "**Activity** | **UNDER DEV**",
+            f"**Activity** | {activity}",
             separator,
             f"**Joined** | {date_joined} at {time_joined}",
             f"**Created** | {date_created} at {time_created}",
