@@ -98,6 +98,7 @@ class BotTools(commands.Cog):
         user_color = user.accent_color
         username = "{}#{}".format(user.name, user.discriminator)
         nickname = user.display_name
+        status = user.status
         avatar_url = user.display_avatar.url
         mutual_guild = len(user.mutual_guilds)
 
@@ -109,29 +110,22 @@ class BotTools(commands.Cog):
         date_created = create_date.date().strftime("%Y/%m/%d")
         time_created = create_date.time().strftime("%H:%M:%S")
 
-        status = user.status
-
-        activity = user.activity.name
-
-        ui_embed = fonction.create_embed(title=nickname, thumbnail=avatar_url)
-
-        ui_embed.add_field(name="Username", value=username)
-        ui_embed.add_field(name="Nickname", value=nickname)
-
-        ui_embed.add_field(name="Presence", value=status, inline=False)
-        ui_embed.add_field(name="Activity", value=activity, inline=False)
-
-        ui_embed.add_field(
-            name="Joined at", value="{} at {}".format(date_joined, time_joined)
+        # activity = user.activity.name
+        separator = "-" * 20
+        embed_description = (
+            f"**Username** | {username}",
+            f"**Nickname** | {nickname}",
+            f"**Status** | {status}",
+            "**Activity** | **UNDER DEV**",
+            separator,
+            f"**Joined** | {date_joined} at {time_joined}",
+            f"**Created** | {date_created} at {time_created}",
+            separator,
+            f"**Common Guild** | {mutual_guild}",
         )
-        ui_embed.add_field(
-            name="Created at", value="{} at {}".format(date_created, time_created)
-        )
-
-        ui_embed.add_field(
-            name="Common Guild",
-            value="{} guilds in common".format(mutual_guild),
-            inline=False,
+        embed_description = "\n".join(embed_description)
+        ui_embed = fonction.create_embed(
+            title=nickname, thumbnail=avatar_url, description=embed_description
         )
 
         await ctx.respond(embed=ui_embed)
