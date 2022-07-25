@@ -98,7 +98,10 @@ class BotTools(commands.Cog):
         user_color = user.accent_color
         username = "{}#{}".format(user.name, user.discriminator)
         nickname = user.display_name
-        status = user.status
+        status_emoji = {"online": "🟢", "offline": "🔴", "dnd": "⛔", "idle": "🌙"}
+
+        status = user.status.value
+        status = f"{status_emoji[status]} {status}"
         avatar_url = user.display_avatar.url
         mutual_guild = len(user.mutual_guilds)
 
