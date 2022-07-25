@@ -101,7 +101,8 @@ class BotTools(commands.Cog):
         status_emoji = {"online": "🟢", "offline": "🔴", "dnd": "⛔", "idle": "🌙"}
 
         status = user.status.value
-        status = f"{status_emoji[status]} {status}"
+        if status in status_emoji:
+            status = f"{status_emoji[status]} {status}"
         avatar_url = user.display_avatar.url
         mutual_guild = len(user.mutual_guilds)
 
