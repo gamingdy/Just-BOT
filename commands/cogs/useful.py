@@ -66,19 +66,10 @@ class BotTools(commands.Cog):
 
     @slash_command(description="Displays bot's info")
     async def info(self, ctx):
-        total_member = []
-        for guilds in self.bot.guilds:
-            total_member += [
-                members.id
-                for members in guilds.members
-                if not members.id in total_member
-            ]
-
-        total_member = len(total_member)
         message_embed = fonction.create_embed(title="Bot's info")
 
         message_embed.add_field(name="Total Guilds", value=len(self.bot.guilds))
-        message_embed.add_field(name="Total Members", value=total_member)
+        message_embed.add_field(name="Total Members", value=len(self.bot.users))
 
         bot_info = await self.bot.application_info()
         bot_owner = bot_info.owner
