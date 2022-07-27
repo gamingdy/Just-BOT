@@ -116,9 +116,6 @@ class BotTools(commands.Cog):
 
         activity = user.activity
         if activity:
-            print(activity)
-            print(activity.type)
-            print(type(activity))
             activity_name = activity.name
             if isinstance(activity, discord.activity.CustomActivity):
                 activity = activity_name
@@ -127,9 +124,7 @@ class BotTools(commands.Cog):
             elif isinstance(activity, discord.activity.Streaming):
                 activity = f"Streaming {activity_name} on {activity.platform}, [stream url]({activity.url})"
             elif isinstance(activity, discord.activity.Spotify):
-                activity = (
-                    "Listening {activity.title}, [track url]({activity.track_url})"
-                )
+                activity = f"Listening {activity.title}({activity.duration}), [track url]({activity.track_url})"
         else:
             activity = "Nothing"
 
