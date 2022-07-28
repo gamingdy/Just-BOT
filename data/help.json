@@ -7,13 +7,20 @@
             "list": "List the users in slowmode, in the active channel."
         }
     ],
-    "Tools": [
+    "Info": [
         "List of different useful things to know about the bot.",
         {
             "ping": "Display bot's ping.",
             "help": "Display bot's help.",
             "info": "Displays bot's info",
+            
+        }
+    ],
+    "Tools":[
+        "List of different tools available",
+        {
             "ui": "Display information about a user or the command author"
         }
     ]
+
 }
