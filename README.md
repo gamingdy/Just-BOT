@@ -4,6 +4,10 @@
 
 ## TODO LIST:
 
+* ### Presentation:
+    - licence : add project licence
+    - readme : write a new project readme
+
 * ### Command:
     - bot_info : info about bot , like uptime or guild number
     - todo : Allows the owner to create a callback for features or bug fixes
