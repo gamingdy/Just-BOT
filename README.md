@@ -12,7 +12,6 @@
     - bot_info : info about bot , like uptime or guild number
     - todo : Allows the owner to create a callback for features or bug fixes
     - serverstats : Get information about the server
-
     - funfact : give obvious or unbelievable information
 
 * ### Update:

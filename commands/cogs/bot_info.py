@@ -7,7 +7,7 @@ import json
 import Utils.funct as fonction
 
 
-class BotTools(commands.Cog):
+class BotInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         with open("data/help.json", encoding="utf8") as help_file:
@@ -145,4 +145,4 @@ class BotTools(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(BotTools(bot))
+    bot.add_cog(BotInfo(bot))
