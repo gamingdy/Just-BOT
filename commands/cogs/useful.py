@@ -83,10 +83,12 @@ class BotTools(commands.Cog):
 
     @slash_command(description="Display user information")
     async def ui(self, ctx, member: discord.Member = None):
-        user = member.id if member else ctx.author.id
-        user = ctx.guild.get_member(user)
+        user_id = member.id if member else ctx.author.id
+        user = ctx.guild.get_member(user_id)
 
-        user_color = user.accent_color
+        fetch_user = await self.bot.fetch_user(user_id)
+        user_color = fetch_user.accent_color
+
         username = "{}#{}".format(user.name, user.discriminator)
         nickname = user.display_name
         status_emoji = {"online": "🟢", "offline": "🔴", "dnd": "⛔", "idle": "🌙"}
@@ -133,7 +135,10 @@ class BotTools(commands.Cog):
         )
         embed_description = "\n".join(embed_description)
         ui_embed = fonction.create_embed(
-            title=nickname, thumbnail=avatar_url, description=embed_description
+            title=nickname,
+            thumbnail=avatar_url,
+            description=embed_description,
+            color=user_color,
         )
 
         await ctx.respond(embed=ui_embed)
