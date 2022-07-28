@@ -10,8 +10,10 @@
     "Tools": [
         "List of different useful things to know about the bot.",
         {
-            "ping": "Know the bot's ping.",
-            "help": "Display the bot's help."
+            "ping": "Display bot's ping.",
+            "help": "Display bot's help.",
+            "info": "Displays bot's info",
+            "ui": "Display information about a user or the command author"
         }
     ]
 }

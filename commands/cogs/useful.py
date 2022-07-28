@@ -20,7 +20,7 @@ class BotTools(commands.Cog):
             if group.lower().startswith(ctx.value.lower())
         ]
 
-    @slash_command(description="Have the bot ping")
+    @slash_command(description="Display bot's ping")
     async def ping(self, ctx):
         ping_start = datetime.now()
         latency = self.bot.latency * 1000
@@ -35,7 +35,7 @@ class BotTools(commands.Cog):
         ping_emb.add_field(name=":robot: BOT", value=bot_ping)
         await ctx.respond(embed=ping_emb)
 
-    @slash_command(description="Displays the bot's help")
+    @slash_command(description="Displays bot's help")
     @option("command_group", autocomplete=get_command_group)
     async def help(self, ctx, command_group=None):
         help_embed = fonction.create_embed("Bot commands")
@@ -81,7 +81,7 @@ class BotTools(commands.Cog):
 
         await ctx.respond(embed=message_embed)
 
-    @slash_command(description="Display user information")
+    @slash_command(description="Display information about a user or the command author")
     async def ui(self, ctx, member: discord.Member = None):
         user_id = member.id if member else ctx.author.id
         user = ctx.guild.get_member(user_id)
