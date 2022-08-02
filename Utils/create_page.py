@@ -21,7 +21,8 @@ class PageNavigation(discord.ui.View):
     ):
         self.actual_page = (self.actual_page - 1) % self.max_page
         generate_page(self.embed, *iter(self.all_pages[self.actual_page]))
-        self.embed.set_footer(text=f"Page {self.actual_page + 1}/{self.max_page}")
+        self.embed.set_footer(
+            text=f"Page {self.actual_page + 1}/{self.max_page}")
         await interaction.response.edit_message(embed=self.embed)
 
     @discord.ui.button(label="Next")
@@ -30,5 +31,6 @@ class PageNavigation(discord.ui.View):
     ):
         self.actual_page = (self.actual_page + 1) % self.max_page
         generate_page(self.embed, *iter(self.all_pages[self.actual_page]))
-        self.embed.set_footer(text=f"Page {self.actual_page + 1}/{self.max_page}")
+        self.embed.set_footer(
+            text=f"Page {self.actual_page + 1}/{self.max_page}")
         await interaction.response.edit_message(embed=self.embed)

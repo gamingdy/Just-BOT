@@ -1,6 +1,5 @@
 from discord.ext import commands
 import traceback
-import sys
 
 from config import database
 from Utils.funct import user_slowmode, create_embed, get_traceback_info

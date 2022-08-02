@@ -30,7 +30,8 @@ class BotInfo(commands.Cog):
         bot_ping = f"**{round(ping_end)}** ms"
 
         ping_emb = fonction.create_embed(title="Bot latency")
-        ping_emb.add_field(name=":satellite: API", value=latency_ms, inline=True)
+        ping_emb.add_field(name=":satellite: API",
+                           value=latency_ms, inline=True)
         ping_emb.add_field(name=":robot: BOT", value=bot_ping)
         await ctx.respond(embed=ping_emb)
 
@@ -43,7 +44,8 @@ class BotInfo(commands.Cog):
                 category = self.commands_help[command_group]
                 category_command = category[1]
 
-                help_embed.title = "{}'s help".format(command_group.capitalize())
+                help_embed.title = "{}'s help".format(
+                    command_group.capitalize())
                 help_embed.description = category[0]
 
                 for command in category_command:
@@ -67,8 +69,10 @@ class BotInfo(commands.Cog):
     async def info(self, ctx):
         message_embed = fonction.create_embed(title="Bot's info")
 
-        message_embed.add_field(name="Total Guilds", value=len(self.bot.guilds))
-        message_embed.add_field(name="Total Members", value=len(self.bot.users))
+        message_embed.add_field(name="Total Guilds",
+                                value=len(self.bot.guilds))
+        message_embed.add_field(name="Total Members",
+                                value=len(self.bot.users))
 
         bot_info = await self.bot.application_info()
         bot_owner = bot_info.owner

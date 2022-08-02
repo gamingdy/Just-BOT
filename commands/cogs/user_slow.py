@@ -13,7 +13,8 @@ class ManageSlowmode(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    slowmode_commands = SlashCommandGroup("slowmode", "Manage channel slowmode")
+    slowmode_commands = SlashCommandGroup(
+        "slowmode", "Manage channel slowmode")
 
     async def add_user_in_field(
         self, emb_message, list_user, field_value, bin_message=None, user_info=None
@@ -93,7 +94,8 @@ class ManageSlowmode(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def disable(self, ctx, target: typing.Union[discord.User, discord.Role]):
         target_list = (
-            target.members if isinstance(target, discord.role.Role) else [target]
+            target.members if isinstance(
+                target, discord.role.Role) else [target]
         )
 
         channel = ctx.channel
@@ -135,7 +137,7 @@ class ManageSlowmode(commands.Cog):
         my_embed = create_embed("Slowmode list")
         if element:
             my_embed.description = f"*List of active slowmode in #{element[0][2]}*"
-            all_page = [element[i : i + 5] for i in range(0, len(element), 5)]
+            all_page = [element[i: i + 5] for i in range(0, len(element), 5)]
 
             all_page = list(
                 map(

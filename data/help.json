@@ -12,7 +12,7 @@
         {
             "ping": "Display bot's ping.",
             "help": "Display bot's help.",
-            "info": "Displays bot's info",
+            "info": "Displays bot's info"
             
         }
     ],
