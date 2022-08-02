@@ -26,34 +26,50 @@ def create_embed(title, description=None, color=None, image=None, thumbnail=None
 
 
 def verify_db():
-    sql_request = """
-    CREATE TABLE "slowmode_info" (
-        "channel_id"    INTEGER,
-        "user_id"   INTEGER,
-        "delay" INTEGER,
-        "last_slowmode" INTEGER,
-        "channel_name"  TEXT,
-        "user_name_discriminator"   TEXT
-    );
-    """
-
+    sql_request = {
+        "slowmode_info": [
+            "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info",
+            "DROP TABLE slowmode_info",
+            """CREATE TABLE "slowmode_info" (
+                "channel_id"	INTEGER,
+                "user_id"	INTEGER,
+                "delay"	INTEGER,
+                "last_slowmode"	INTEGER,
+                "channel_name"	TEXT,
+                "user_name_discriminator"	TEXT
+            );
+            """
+        ],
+        "serverstats":[
+            "SELECT date,total_member,new_member,member_lost,posted_message,added_reaction, FROM serverstats",
+            "DROP TABLE serverstats",
+            """CREATE TABLE "serverstats" (
+                "date"	TEXT,
+                "total_member"	INTEGER,
+                "new_member"	INTEGER,
+                "member_lost"	INTEGER,
+                "posted_message"	INTEGER,
+                "added_reaction"	INTEGER
+            );
+            """
+        ]
+    }
     curs = database.cursor()
-    try:
-        curs.execute(
-            "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info"
-        )
-    except sqlite3.OperationalError:
-        print("Database error")
-        print("Try to create table in database")
+    for table in sql_request:
         try:
-            curs.execute(sql_request)
+            curs.execute(sql_request[table][0])
         except sqlite3.OperationalError:
-            print("Table already exists, but an error occurred")
-            print("Try to recreate table")
+            print("Database error")
+            print("Try to create table in database")
+            try:
+                curs.execute(sql_request[table][2])
+            except sqlite3.OperationalError:
+                print("Table already exists, but an error occurred")
+                print("Try to recreate table")
 
-            curs.execute("DROP TABLE slowmode_info")
-            curs.execute(sql_request)
-        database.commit()
+                curs.execute(sql_request[table][1])
+                curs.execute(sql_request[table][2])
+    database.commit()
 
 
 def load_cog(path, bot):
