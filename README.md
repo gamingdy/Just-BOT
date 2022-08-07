@@ -5,6 +5,8 @@
 ## TODO LIST:
 
 * ### Presentation:
+    - discord : create discord server for bot and me
+    - hosted version : Provide a hosted version of the bot
     - licence : add project licence
     - readme : write a new project readme
 
