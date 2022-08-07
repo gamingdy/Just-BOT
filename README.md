@@ -12,6 +12,7 @@
     - todo : Allows the owner to create a callback for features or bug fixes
     - serverstats : Get information about the server
     - funfact : give obvious or unbelievable information
+    - autovoice : Create a voice channel when the user joins a specific channel
 
 * ### Update:
     - bot_info : add bot uptime
