@@ -13,8 +13,7 @@ def create_embed(title, description=None, color=None, image=None, thumbnail=None
     embed.title = title
     embed.description = description
     embed.colour = (
-        discord.Colour.from_rgb(
-            randint(0, 255), randint(0, 255), randint(0, 255))
+        discord.Colour.from_rgb(randint(0, 255), randint(0, 255), randint(0, 255))
         if not color
         else color
     )
@@ -93,8 +92,7 @@ async def user_slowmode(channel, user, delay):
 
 
 async def verify_user_slowmode(bot):
-    my_database = database.cursor().execute(
-        "SELECT * FROM slowmode_info").fetchall()
+    my_database = database.cursor().execute("SELECT * FROM slowmode_info").fetchall()
     if my_database:
         for row in my_database:
             if row[3]:
@@ -114,8 +112,7 @@ def get_traceback_info(traceback_error):
         "\nThe above exception was the direct cause of the following exception:\n\n"
     )
     traceback_error = traceback_error[:end_of_traceback]
-    file_name = traceback_error[-2].split(",")[0].replace("\\",
-                                                          "/").split("/")[-1][:-1]
+    file_name = traceback_error[-2].split(",")[0].replace("\\", "/").split("/")[-1][:-1]
     line = traceback_error[-2].split(",")[1]
     bad_code = "".join(traceback_error[-2].split(",")[2:])
 
