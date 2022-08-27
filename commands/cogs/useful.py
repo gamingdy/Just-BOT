@@ -27,13 +27,13 @@ class BotTools(commands.Cog):
         avatar_url = user.display_avatar.url
         mutual_guild = len(user.mutual_guilds)
 
-        join_date = user.joined_at
-        date_joined = join_date.date().strftime("%Y/%m/%d")
-        time_joined = join_date.time().strftime("%H:%M:%S")
+        join_date = int(user.joined_at.timestamp())
+        date_joined = f"<t:{join_date}:F>"
+        since_joined = f"<t:{join_date}:R>"
 
-        create_date = user.created_at
-        date_created = create_date.date().strftime("%Y/%m/%d")
-        time_created = create_date.time().strftime("%H:%M:%S")
+        create_date = int(user.created_at.timestamp())
+        date_created = f"<t:{create_date}:F>"
+        since_created = f"<t:{create_date}:R>"
 
         activity = user.activity
         if activity:
@@ -56,8 +56,8 @@ class BotTools(commands.Cog):
             f"**Status** | {status}",
             f"**Activity** | {activity}",
             separator,
-            f"**Joined** | {date_joined} at {time_joined}",
-            f"**Created** | {date_created} at {time_created}",
+            f"**Joined** | {date_joined} ({since_joined})",
+            f"**Created** | {date_created} ({since_created})",
             separator,
             f"**Common Guild** | {mutual_guild}",
         )
