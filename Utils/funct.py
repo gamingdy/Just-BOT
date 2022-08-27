@@ -30,27 +30,14 @@ def verify_db():
             "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info",
             "DROP TABLE slowmode_info",
             """CREATE TABLE "slowmode_info" (
-                "channel_id"	INTEGER,
-                "user_id"	INTEGER,
-                "delay"	INTEGER,
-                "last_slowmode"	INTEGER,
-                "channel_name"	TEXT,
-                "user_name_discriminator"	TEXT
+                "channel_id"    INTEGER,
+                "user_id"   INTEGER,
+                "delay" INTEGER,
+                "last_slowmode" INTEGER,
+                "channel_name"  TEXT,
+                "user_name_discriminator"   TEXT
             );
-            """
-        ],
-        "serverstats":[
-            "SELECT date,total_member,new_member,member_lost,posted_message,added_reaction, FROM serverstats",
-            "DROP TABLE serverstats",
-            """CREATE TABLE "serverstats" (
-                "date"	TEXT,
-                "total_member"	INTEGER,
-                "new_member"	INTEGER,
-                "member_lost"	INTEGER,
-                "posted_message"	INTEGER,
-                "added_reaction"	INTEGER
-            );
-            """
+            """,
         ]
     }
     curs = database.cursor()
