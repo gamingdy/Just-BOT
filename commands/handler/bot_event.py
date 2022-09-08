@@ -67,7 +67,7 @@ class EventHandler(commands.Cog):
                     file_name, line, bad_code
                 ),
             )
-            await owner.send(embed=embed_message)
+            #await owner.send(embed=embed_message)
 
 
 def setup(bot):
