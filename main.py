@@ -3,7 +3,10 @@ import discord
 from config import TOKEN, debug_guild
 from Utils.funct import load_cog, verify_db, verify_user_slowmode
 
-bot = discord.Bot(intents=discord.Intents.all(), debug_guilds=debug_guild)
+statut = discord.Status.do_not_disturb
+bot = discord.Bot(
+    intents=discord.Intents.all(), status=statut, debug_guilds=debug_guild
+)
 
 
 @bot.event

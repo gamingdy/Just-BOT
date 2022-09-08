@@ -46,11 +46,11 @@ $ pip -r requirements.txt
 
 **Windows**
 ```
-	
+    
 C:\> python3 -m venv \path\to\new\virtual\environment
-	
+    
 C:\> \path\to\new\virtual\environment\Scripts\activate.bat
-	
+    
 C:\> pip -r requirements.txt
 ```
 
