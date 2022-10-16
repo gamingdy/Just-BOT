@@ -1,7 +1,8 @@
-from discord.ext import commands
-from discord.commands import slash_command, option
-from datetime import datetime
 import json
+from datetime import datetime
+
+from discord.commands import slash_command, option
+from discord.ext import commands
 
 import Utils.funct as fonction
 
@@ -25,7 +26,7 @@ class BotInfo(commands.Cog):
         latency = self.bot.latency * 1000
         await ctx.send("Pong", delete_after=0.1)
 
-        latency_ms = f"**{str(round(latency,0))[:-2]}** ms"
+        latency_ms = f"**{str(round(latency, 0))[:-2]}** ms"
         ping_end = (datetime.now() - ping_start).microseconds / 1000
         bot_ping = f"**{round(ping_end)}** ms"
 

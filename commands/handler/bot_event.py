@@ -1,8 +1,7 @@
 from discord.ext import commands
-import traceback
 
+from Utils.funct import user_slowmode
 from config import database
-from Utils.funct import user_slowmode, create_embed, get_traceback_info
 
 
 class EventHandler(commands.Cog):
@@ -25,6 +24,7 @@ class EventHandler(commands.Cog):
         if db_row:
             await user_slowmode(channel, author, db_row[0][2])
 
+    """
     @commands.Cog.listener()
     async def on_application_command_error(self, ctx, error):
 
@@ -44,6 +44,7 @@ class EventHandler(commands.Cog):
                 ephemeral=True,
             )
         else:
+            
             embed_message.description = "Oh, it seems that an unknown error occurred, no worries, a very explicit message has been sent to the dev to solve the problem👌."
             await ctx.respond(embed=embed_message, ephemeral=True)
 
@@ -68,6 +69,7 @@ class EventHandler(commands.Cog):
                 ),
             )
             #await owner.send(embed=embed_message)
+            """
 
 
 def setup(bot):

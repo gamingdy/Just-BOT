@@ -1,11 +1,12 @@
-import discord
-from discord.ext import commands
-from discord.commands import SlashCommandGroup
-import typing
 import time
+import typing
 
-from Utils.funct import create_embed
+import discord
+from discord.commands import SlashCommandGroup
+from discord.ext import commands
+
 from Utils.create_page import generate_page, PageNavigation
+from Utils.funct import create_embed
 from config import database
 
 
@@ -16,7 +17,7 @@ class ManageSlowmode(commands.Cog):
     slowmode_commands = SlashCommandGroup("slowmode", "Manage channel slowmode")
 
     async def add_user_in_field(
-        self, emb_message, list_user, field_value, bin_message=None, user_info=None
+            self, emb_message, list_user, field_value, bin_message=None, user_info=None
     ):
         for keys, user in enumerate(list_user):
             if keys < 5:
@@ -48,7 +49,7 @@ class ManageSlowmode(commands.Cog):
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
     async def enable(
-        self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
+            self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
     ):
         if isinstance(target, discord.role.Role):
             target_list = target.members
@@ -139,7 +140,7 @@ class ManageSlowmode(commands.Cog):
         my_embed = create_embed("Slowmode list")
         if element:
             my_embed.description = f"*List of active slowmode in #{element[0][2]}*"
-            all_page = [element[i : i + 5] for i in range(0, len(element), 5)]
+            all_page = [element[i: i + 5] for i in range(0, len(element), 5)]
 
             all_page = list(
                 map(

@@ -1,6 +1,6 @@
 # Just-BOT
- Discord bot with something
 
+Discord bot with something
 
 ## TODO LIST:
 

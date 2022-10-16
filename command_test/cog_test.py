@@ -1,10 +1,5 @@
-import discord
-from discord.ext import commands
 from discord.commands import SlashCommandGroup
-
-from Utils.funct import create_embed
-from Utils.create_page import generate_page, PageNavigation
-from config import database
+from discord.ext import commands
 
 
 class TestCommand(commands.Cog):
