@@ -40,7 +40,7 @@ class ManageSlowmode(commands.Cog):
             prev = pourc
             if time.time() - last_refresh > 1:
                 last_refresh = time.time()
-                await message.edit_original_message(
+                await message.edit_original_reponse(
                     content=(loaded * prev) + (unloaded * (10 - prev))
                 )
 
@@ -90,7 +90,7 @@ class ManageSlowmode(commands.Cog):
                 target_list.remove(self.bot.user)
                 await ctx.send("You can't slowmode bot")
         database.commit()
-        await bot_status.edit_original_message(
+        await bot_status.edit_original_response(
             content=f"Slowmode on for {len(target_list)} users"
         )
 
@@ -121,7 +121,7 @@ class ManageSlowmode(commands.Cog):
                 bot_status, user_nb / len(target_list), prev, last_refresh
             )
         database.commit()
-        await bot_status.edit_original_message(
+        await bot_status.edit_original_response(
             content=f"Slowmode off for {len(target_list)} users"
         )
 
