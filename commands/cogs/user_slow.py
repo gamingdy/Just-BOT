@@ -51,7 +51,7 @@ class ManageSlowmode(commands.Cog):
     async def enable(
             self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
     ):
-        if isinstance(target, discord.role.Role):
+        if isinstance(target, discord.Role):
             target_list = target.members
         else:
             target_list = [target]
@@ -98,7 +98,7 @@ class ManageSlowmode(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def disable(self, ctx, target: typing.Union[discord.User, discord.Role]):
         target_list = (
-            target.members if isinstance(target, discord.role.Role) else [target]
+            target.members if isinstance(target, discord.Role) else [target]
         )
 
         channel = ctx.channel
