@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 from Utils.funct import user_slowmode
@@ -77,6 +78,37 @@ class EventHandler(commands.Cog):
 class VoiceHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    async def check_channel(self, auto_chan, before):
+        old_chan = self.bot.get_channel(before.channel.id)
+        meb = old_chan.voice_states
+        if len(meb) == 0 and old_chan.id != auto_chan.id:
+            await old_chan.delete()
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        auto_chan = self.bot.get_channel(878997421764513812)
+        if after.channel:
+            if before.channel:
+                await self.check_channel(auto_chan, before)
+
+            connected_channel = after.channel
+            if connected_channel.id == auto_chan.id:
+                channel_name = f"{member.name}' channel"
+                new_permissions = {
+                    member: discord.PermissionOverwrite(read_messages=True)
+                }
+                channel_category = self.bot.get_channel(810566227453935636)
+
+                created_channel = await after.channel.guild.create_voice_channel(
+                    name=channel_name, overwrites=new_permissions, category=channel_category
+                )
+                await member.move_to(created_channel)
+
+        else:
+            await self.check_channel(auto_chan, before)
+
+
 def setup(bot):
     bot.add_cog(EventHandler(bot))
     bot.add_cog(VoiceHandler(bot))
