@@ -54,7 +54,8 @@ class BotInfo(commands.Cog):
                         name=command, value=category_command[command], inline=False
                     )
             else:
-                help_embed.description = f":warning:**The category `{command_group.capitalize()}` is not found**\n\n You can do `/help` to see all available categories"
+                help_embed.description = f":warning:**The category `{command_group.capitalize()}` is not found**\n\n " \
+                                         f"You can do `/help` to see all available categories "
         else:
             help_embed.description = (
                 "You can do `/help <category>` to get help about a category"

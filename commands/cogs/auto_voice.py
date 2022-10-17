@@ -15,7 +15,7 @@ class AutoVoice(commands.Cog):
     async def config(self, ctx, channel: discord.VoiceChannel):
         voice_cursor = database.cursor()
         active_voice_channel = voice_cursor.execute("SELECT channel_id FROM auto_voice WHERE guild_id=(?)",
-                                                    (ctx.guild.id, )).fetchall()
+                                                    (ctx.guild.id,)).fetchall()
         if active_voice_channel:
             voice_cursor.execute("UPDATE auto_voice SET channel_id=(?) WHERE guild_id=(?)", (channel.id, ctx.guild.id))
         else:

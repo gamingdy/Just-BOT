@@ -33,7 +33,7 @@ class ManageSlowmode(commands.Cog):
         return bin_message
 
     async def loading_bar(self, message, pourcentage, prev, last_refresh):
-        pourc = int((pourcentage) * 10)
+        pourc = int(pourcentage * 10)
         loaded = "🟩"
         unloaded = "🟥"
         if prev != pourc:
@@ -77,7 +77,8 @@ class ManageSlowmode(commands.Cog):
                     )
                 else:
                     database.cursor().execute(
-                        "INSERT INTO slowmode_info (channel_id,user_id,delay, channel_name,user_name_discriminator) VALUES (?,?,?,?,?)",
+                        "INSERT INTO slowmode_info (channel_id,user_id,delay, channel_name,user_name_discriminator) "
+                        "VALUES (?,?,?,?,?)",
                         (
                             channel.id,
                             user.id,
@@ -132,7 +133,8 @@ class ManageSlowmode(commands.Cog):
         element = (
             database.cursor()
             .execute(
-                "SELECT delay,user_name_discriminator,channel_name FROM slowmode_info WHERE channel_id = (?) ORDER BY delay DESC",
+                "SELECT delay,user_name_discriminator,channel_name FROM slowmode_info WHERE channel_id = (?) ORDER BY "
+                "delay DESC",
                 (channel.id,),
             )
             .fetchall()
