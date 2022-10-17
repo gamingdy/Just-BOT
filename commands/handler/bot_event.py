@@ -74,5 +74,9 @@ class EventHandler(commands.Cog):
     """
 
 
+class VoiceHandler(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 def setup(bot):
     bot.add_cog(EventHandler(bot))
+    bot.add_cog(VoiceHandler(bot))
