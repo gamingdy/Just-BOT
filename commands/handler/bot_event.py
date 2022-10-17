@@ -45,8 +45,9 @@ class EventHandler(commands.Cog):
             )
         else:
             
-            embed_message.description = "Oh, it seems that an unknown error occurred, no worries, a very explicit message has been sent to the dev to solve the problem👌."
-            await ctx.respond(embed=embed_message, ephemeral=True)
+            embed_message.description = "Oh, it seems that an unknown error occurred, no worries, a very explicit 
+            message has been sent to the dev to solve the problem👌." await ctx.respond(embed=embed_message, 
+            ephemeral=True) 
 
             failed_command = ctx.command
             bot_info = await self.bot.application_info()
@@ -56,7 +57,8 @@ class EventHandler(commands.Cog):
             )
             file_name, line, bad_code = get_traceback_info(traceback_error)
 
-            embed_message.description = "Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the solution 🙃. Here is the problematic command and the error."
+            embed_message.description = "Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the 
+            solution 🙃. Here is the problematic command and the error." 
 
             embed_message.add_field(
                 name="🛠 Command", value=failed_command, inline=False
@@ -69,7 +71,7 @@ class EventHandler(commands.Cog):
                 ),
             )
             #await owner.send(embed=embed_message)
-            """
+    """
 
 
 def setup(bot):
