@@ -39,6 +39,25 @@ def verify_db():
                 "user_name_discriminator"   TEXT
             );
             """,
+        ],
+        "auto_voice": [
+            "SELECT guild_id,channel_id FROM auto_voice",
+            "DROP TABLE auto_voice",
+            """CREATE TABLE "auto_voice" (
+                "guild_id"	INTEGER,
+                "channel_id"	INTEGER
+            );
+            """
+        ],
+        "active_voice": [
+            "SELECT author_id,channel_id FROM active_voice",
+            "DROP TABLE active_voice",
+            """
+            CREATE TABLE "active_voice" (
+                "author_id"	INTEGER,
+                "channel_id"	INTEGER
+            );
+            """
         ]
     }
     curs = database.cursor()
