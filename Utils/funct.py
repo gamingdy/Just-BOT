@@ -26,6 +26,7 @@ def create_embed(title, description=None, color=None, image=None, thumbnail=None
 
 
 def verify_db():
+    print("Checking database tables")
     sql_request = {
         "slowmode_info": [
             "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info",
@@ -85,6 +86,7 @@ def load_cog(path, bot):
         else:
             if content.endswith(".py"):
                 bot.load_extension(f"{path}/{content}"[:-3].replace("/", "."))
+                print(f"Loaded extension: {path}/{content}")
 
 
 async def user_slowmode(channel, user, delay):
