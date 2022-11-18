@@ -3,6 +3,7 @@ from discord.commands import SlashCommandGroup
 from discord.ext import commands
 
 from config import database
+from Utils.funct import create_embed
 
 
 class AutoVoice(commands.Cog):
@@ -11,7 +12,7 @@ class AutoVoice(commands.Cog):
 
     auto_voice = SlashCommandGroup(name="voice", description="Auto voice command")
 
-    @auto_voice.command(description="Config auto voice channel")
+    @auto_voice.command(description="Configure auto voice channel")
     async def config(self, ctx, channel: discord.VoiceChannel):
         voice_cursor = database.cursor()
         active_voice_channel = voice_cursor.execute("SELECT channel_id FROM auto_voice WHERE guild_id=(?)",
