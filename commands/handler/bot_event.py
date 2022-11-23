@@ -82,31 +82,41 @@ class VoiceHandler(commands.Cog):
     async def check_channel(self, auto_chan, before):
         old_chan = self.bot.get_channel(before.channel.id)
         meb = old_chan.voice_states
-        if len(meb) == 0 and old_chan.id != auto_chan.id:
+        if len(meb) == 0 and old_chan.id != auto_chan:
             await old_chan.delete()
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        auto_chan = self.bot.get_channel(878997421764513812)
-        if after.channel:
-            if before.channel:
+        voice_cursor = database.cursor()
+        guild = before.channel.guild if before.channel else after.channel.guild
+        auto_voice = voice_cursor.execute(
+            "SELECT channel_id FROM auto_voice WHERE guild_id=(?)",
+            (guild.id,),
+        ).fetchall()
+
+        if auto_voice:
+            auto_chan = auto_voice[0][0]
+            category_id = self.bot.get_channel(auto_chan).category_id
+            category = self.bot.get_channel(category_id)
+
+            if after.channel:
+                if before.channel:
+                    await self.check_channel(auto_chan, before)
+
+                connected_channel = after.channel
+                if connected_channel.id == auto_chan:
+                    channel_name = f"{member.name}' channel"
+                    new_permissions = {
+                        member: discord.PermissionOverwrite(read_messages=True)
+                    }
+
+                    created_channel = await guild.create_voice_channel(
+                        name=channel_name, overwrites=new_permissions, category=category
+                    )
+                    await member.move_to(created_channel)
+
+            else:
                 await self.check_channel(auto_chan, before)
-
-            connected_channel = after.channel
-            if connected_channel.id == auto_chan.id:
-                channel_name = f"{member.name}' channel"
-                new_permissions = {
-                    member: discord.PermissionOverwrite(read_messages=True)
-                }
-                channel_category = self.bot.get_channel(810566227453935636)
-
-                created_channel = await after.channel.guild.create_voice_channel(
-                    name=channel_name, overwrites=new_permissions, category=channel_category
-                )
-                await member.move_to(created_channel)
-
-        else:
-            await self.check_channel(auto_chan, before)
 
 
 def setup(bot):
