@@ -45,21 +45,21 @@ def verify_db():
             "SELECT guild_id,channel_id FROM auto_voice",
             "DROP TABLE auto_voice",
             """CREATE TABLE "auto_voice" (
-                "guild_id"	INTEGER,
-                "channel_id"	INTEGER
+                "guild_id"  INTEGER,
+                "channel_id"    INTEGER,
             );
-            """
+            """,
         ],
         "active_voice": [
             "SELECT author_id,channel_id FROM active_voice",
             "DROP TABLE active_voice",
             """
             CREATE TABLE "active_voice" (
-                "author_id"	INTEGER,
-                "channel_id"	INTEGER
+                "author_id" INTEGER,
+                "channel_id"    INTEGER
             );
-            """
-        ]
+            """,
+        ],
     }
     curs = database.cursor()
     for table in sql_request:
@@ -67,11 +67,11 @@ def verify_db():
             curs.execute(sql_request[table][0])
         except sqlite3.OperationalError:
             print("Database error")
-            print("Try to create table in database")
+            print(f"Try to create {table} table in database")
             try:
                 curs.execute(sql_request[table][2])
             except sqlite3.OperationalError:
-                print("Table already exists, but an error occurred")
+                print(f"{table} already exists, but an error occurred")
                 print("Try to recreate table")
 
                 curs.execute(sql_request[table][1])
