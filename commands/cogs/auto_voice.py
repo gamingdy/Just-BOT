@@ -24,6 +24,13 @@ class AutoVoice(commands.Cog):
                                  (ctx.guild.id, channel.id,))
         database.commit()
         await ctx.respond("The <#{}> channel is now configured as auto voice channel".format(channel.id))
+    @auto_voice.command(description="Disable auto voice channel")
+    async def disable(self, ctx):
+        voice_cursor = database.cursor()
+        voice_cursor.execute(
+            "DELETE FROM auto_voice WHERE guild_id=(?)", (ctx.guild.id,)
+        )
+        await ctx.respond("Auto voice are now disable in this guild")
 
 
 def setup(bot):
