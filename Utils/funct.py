@@ -3,6 +3,7 @@ import os
 import sqlite3
 import time
 from random import randint
+import json
 
 import discord
 
@@ -85,8 +86,15 @@ def load_cog(path, bot):
             load_cog(f"{path}/{content}", bot)
         else:
             if content.endswith(".py"):
-                bot.load_extension(f"{path}/{content}"[:-3].replace("/", "."))
+                cog_path = f"{path}/{content}"[:-3].replace("/", ".")
+                bot.load_extension(cog_path)
                 print(f"Loaded extension: {path}/{content}")
+                folder, file_name = cog_path.split(".")[1:]
+                with open("data/extension.json", "r+") as file:
+                    data = json.load(file)
+                    data[f"{file_name} [{folder}]"] = cog_path
+                    file.seek(0)
+                    json.dump(data, file, indent=4)
 
 
 async def user_slowmode(channel, user, delay):
