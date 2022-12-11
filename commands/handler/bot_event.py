@@ -112,6 +112,14 @@ class VoiceHandler(commands.Cog):
                     )
                     await member.move_to(created_channel)
 
+                    voice_cursor.execute(
+                        "INSERT INTO active_voice (author_id, channel_id) VALUES(?,?)",
+                        (
+                            member.id,
+                            created_channel.id,
+                        ),
+                    )
+                    database.commit()
             else:
                 await self.check_channel(auto_chan, before)
 
