@@ -1,7 +1,9 @@
+import traceback
+
 import discord
 from discord.ext import commands
 
-from Utils.funct import user_slowmode, create_embed
+from Utils.funct import user_slowmode, create_embed, get_traceback_info
 from config import database
 
 
@@ -44,6 +46,7 @@ class EventHandler(commands.Cog):
             )
 
             await ctx.respond(embed=embed_message, ephemeral=True)
+        """
         else:
 
             embed_message.description = "Oh, it seems that an unknown error occurred, no worries, a very explicit message has been sent to the dev to solve the problem👌."
@@ -70,6 +73,7 @@ class EventHandler(commands.Cog):
             )
             print(error)
             # await bot_info.owner.send(embed=embed_message)
+        """
 
 
 class VoiceHandler(commands.Cog):
@@ -80,6 +84,10 @@ class VoiceHandler(commands.Cog):
         old_chan = self.bot.get_channel(before.channel.id)
         meb = old_chan.voice_states
         if len(meb) == 0 and old_chan.id != auto_chan:
+            database.cursor().execute(
+                "DELETE FROM active_voice WHERE channel_id=(?)", (old_chan.id,)
+            )
+            database.commit()
             await old_chan.delete()
 
     @commands.Cog.listener()
