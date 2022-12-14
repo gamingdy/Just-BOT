@@ -15,7 +15,9 @@ async def on_ready():
     print("Checking users in slowmode")
     await verify_user_slowmode(bot)
     print("Checking completed")
-    total_guild = ["{} ({})".format(guild.name, guild.member_count) for guild in bot.guilds]
+    total_guild = [
+        "{} ({})".format(guild.name, guild.member_count) for guild in bot.guilds
+    ]
     print("Found {} guilds: {}".format(len(total_guild), ",".join(total_guild)))
 
 

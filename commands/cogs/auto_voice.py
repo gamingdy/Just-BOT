@@ -52,7 +52,7 @@ class AutoVoice(commands.Cog):
             )
         else:
             voice_cursor.execute(
-                "INSERT INTO auto_voice (guild_id, channel_id) VALUES (?,?,?)",
+                "INSERT INTO auto_voice (guild_id, channel_id) VALUES (?,?)",
                 (
                     ctx.guild.id,
                     channel.id,
@@ -72,6 +72,7 @@ class AutoVoice(commands.Cog):
         voice_cursor.execute(
             "DELETE FROM auto_voice WHERE guild_id=(?)", (ctx.guild.id,)
         )
+        database.commit()
         await ctx.respond("Auto voice are now disable in this guild")
 
     @auto_voice.command(description="Change name of current voice channel", name="name")
