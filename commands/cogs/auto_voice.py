@@ -4,6 +4,7 @@ from discord.ext import commands
 
 from config import database
 from Utils.funct import create_embed
+from Utils.custom_error import NotGuildOwner
 
 
 class AutoVoice(commands.Cog):
@@ -29,7 +30,13 @@ class AutoVoice(commands.Cog):
 
         return (False, "You are not connected in voice channel")
 
+    async def guild_owner(ctx):
+        if ctx.guild.owner_id == ctx.author.id:
+            return True
+        raise NotGuildOwner("You are not guild owner ")
+
     @auto_voice.command(description="Configure auto voice channel")
+    @commands.check(guild_owner)
     async def config(self, ctx, channel: discord.VoiceChannel):
         voice_cursor = database.cursor()
         active_voice_channel = voice_cursor.execute(
@@ -59,6 +66,7 @@ class AutoVoice(commands.Cog):
         )
 
     @auto_voice.command(description="Disable auto voice channel")
+    @commands.check(guild_owner)
     async def disable(self, ctx):
         voice_cursor = database.cursor()
         voice_cursor.execute(
