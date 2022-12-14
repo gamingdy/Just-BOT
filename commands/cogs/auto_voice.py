@@ -12,6 +12,23 @@ class AutoVoice(commands.Cog):
 
     auto_voice = SlashCommandGroup(name="voice", description="Auto voice command")
 
+    def connected_admin(self, ctx):
+        voice_state = ctx.author.voice
+        if voice_state:
+            voice_cursor = database.cursor()
+            is_admin = voice_cursor.execute(
+                "SELECT channel_id FROM active_voice WHERE author_id=(?)",
+                (ctx.author.id,),
+            ).fetchall()
+            if len(is_admin) > 0:
+                for channel in is_admin:
+                    if channel[0] == voice_state.channel.id:
+                        return (True, "")
+            else:
+                return (False, "You are not channel admin")
+
+        return (False, "You are not connected in voice channel")
+
     @auto_voice.command(description="Configure auto voice channel")
     async def config(self, ctx, channel: discord.VoiceChannel):
         voice_cursor = database.cursor()
@@ -48,6 +65,14 @@ class AutoVoice(commands.Cog):
             "DELETE FROM auto_voice WHERE guild_id=(?)", (ctx.guild.id,)
         )
         await ctx.respond("Auto voice are now disable in this guild")
+
+    @auto_voice.command(description="Change name of current voice channel", name="name")
+    async def change_name(self, ctx, name: str):
+        connected_admin = self.connected_admin(ctx)
+        if connected_admin[0]:
+            await ctx.respond("Hello admin")
+        else:
+            await ctx.respond(connected_admin[1])
 
 
 def setup(bot):
