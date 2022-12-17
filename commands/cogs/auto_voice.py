@@ -6,7 +6,11 @@ from discord.ext import commands
 
 from config import database
 from Utils.funct import create_embed
-from Utils.custom_error import NotGuildOwner
+from Utils.custom_error import (
+    NotGuildOwner,
+    NotConnectedInVoiceChannel,
+    NotVoiceChannelAdmin,
+)
 
 
 class AutoVoice(commands.Cog):
@@ -15,7 +19,7 @@ class AutoVoice(commands.Cog):
 
     auto_voice = SlashCommandGroup(name="voice", description="Auto voice command")
 
-    def connected_admin(self, ctx):
+    async def connected_admin(ctx):
         voice_state = ctx.author.voice
         if voice_state:
             voice_cursor = database.cursor()
@@ -26,11 +30,11 @@ class AutoVoice(commands.Cog):
             if len(is_admin) > 0:
                 for channel in is_admin:
                     if channel[0] == voice_state.channel.id:
-                        return (True, "")
+                        return True
             else:
-                return (False, "You are not channel admin")
+                raise NotVoiceChannelAdmin("You are not channel admin")
 
-        return (False, "You are not connected in voice channel")
+        raise NotConnectedInVoiceChannel("You are not connected in voice channel")
 
     async def guild_owner(ctx):
         if ctx.guild.owner_id == ctx.author.id:
@@ -78,16 +82,13 @@ class AutoVoice(commands.Cog):
         await ctx.respond("Auto voice are now disable in this guild")
 
     @auto_voice.command(description="Change name of current voice channel", name="name")
+    @commands.check(connected_admin)
     async def change_name(self, ctx, name: str):
-        connected_admin = self.connected_admin(ctx)
-        if connected_admin[0]:
-            cooldown_time = round(time.time() + 60)
-            await ctx.author.voice.channel.edit(name=name)
-            await ctx.respond(
-                f"The new channel name is {name}. You will be able to modify it in <t:{cooldown_time}:R>"
-            )
-        else:
-            await ctx.respond(connected_admin[1], ephemeral=True)
+        cooldown_time = round(time.time() + 60)
+        await ctx.author.voice.channel.edit(name=name)
+        await ctx.respond(
+            f"The new channel name is `{name}`. You will be able to modify it in <t:{cooldown_time}:R>"
+        )
 
 
 def setup(bot):

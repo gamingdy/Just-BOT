@@ -3,7 +3,11 @@ import traceback
 from discord.ext import commands
 
 from Utils.funct import create_embed, get_traceback_info
-from Utils.custom_error import NotGuildOwner
+from Utils.custom_error import (
+    NotGuildOwner,
+    NotConnectedInVoiceChannel,
+    NotVoiceChannelAdmin,
+)
 
 
 class ErrorHandler(commands.Cog):
@@ -12,13 +16,15 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_application_command_error(self, ctx, error):
-
+        error_list = (
+            commands.NotOwner,
+            NotGuildOwner,
+            commands.CommandOnCooldown,
+            NotConnectedInVoiceChannel,
+            NotVoiceChannelAdmin,
+        )
         embed_message = create_embed("AN ERROR OCCURRED 😔")
-        if isinstance(error, commands.NotOwner):
-            embed_message.description = f"**{str(error)}**"
-            await ctx.respond(embed=embed_message, ephemeral=True)
-
-        elif isinstance(error, NotGuildOwner):
+        if isinstance(error, error_list):
             embed_message.description = f"**{str(error)}**"
             await ctx.respond(embed=embed_message, ephemeral=True)
 
