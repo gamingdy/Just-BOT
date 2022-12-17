@@ -83,7 +83,8 @@ class AutoVoice(commands.Cog):
 
     @auto_voice.command(description="Change name of current voice channel", name="name")
     @commands.check(connected_admin)
-    async def change_name(self, ctx, name: str):
+    @commands.cooldown(rate=1, per=60, type=commands.BucketType.member)
+    async def name(self, ctx, name: str):
         cooldown_time = round(time.time() + 60)
         await ctx.author.voice.channel.edit(name=name)
         await ctx.respond(
