@@ -19,7 +19,8 @@ class ErrorHandler(commands.Cog):
             await ctx.respond(embed=embed_message, ephemeral=True)
 
         elif isinstance(error, NotGuildOwner):
-            await ctx.respond(error, ephemeral=True)
+            embed_message.description = f"**{str(error)}**"
+            await ctx.respond(embed=embed_message, ephemeral=True)
 
         elif isinstance(error.original, commands.MissingPermissions):
             error = error.original
