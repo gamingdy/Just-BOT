@@ -1,3 +1,5 @@
+import time
+
 import discord
 from discord.commands import SlashCommandGroup
 from discord.ext import commands
@@ -79,9 +81,13 @@ class AutoVoice(commands.Cog):
     async def change_name(self, ctx, name: str):
         connected_admin = self.connected_admin(ctx)
         if connected_admin[0]:
-            await ctx.respond("Hello admin")
+            cooldown_time = round(time.time() + 60)
+            await ctx.author.voice.channel.edit(name=name)
+            await ctx.respond(
+                f"The new channel name is {name}. You will be able to modify it in <t:{cooldown_time}:R>"
+            )
         else:
-            await ctx.respond(connected_admin[1])
+            await ctx.respond(connected_admin[1], ephemeral=True)
 
 
 def setup(bot):
