@@ -33,33 +33,53 @@ def verify_db():
             "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info",
             "DROP TABLE slowmode_info",
             """CREATE TABLE "slowmode_info" (
-                "channel_id"    INTEGER,
-                "user_id"   INTEGER,
-                "delay" INTEGER,
-                "last_slowmode" INTEGER,
-                "channel_name"  TEXT,
-                "user_name_discriminator"   TEXT
-            );
-            """,
+				"channel_id"    INTEGER,
+				"user_id"   INTEGER,
+				"delay" INTEGER,
+				"last_slowmode" INTEGER,
+				"channel_name"  TEXT,
+				"user_name_discriminator"   TEXT
+			);
+			""",
         ],
         "auto_voice": [
             "SELECT guild_id,channel_id FROM auto_voice",
             "DROP TABLE auto_voice",
             """CREATE TABLE "auto_voice" (
-                "guild_id"  INTEGER,
-                "channel_id"    INTEGER,
-            );
-            """,
+				"guild_id"  INTEGER,
+				"channel_id"    INTEGER,
+			);
+			""",
         ],
         "active_voice": [
             "SELECT author_id,channel_id FROM active_voice",
             "DROP TABLE active_voice",
             """
-            CREATE TABLE "active_voice" (
-                "author_id" INTEGER,
-                "channel_id"    INTEGER
-            );
-            """,
+			CREATE TABLE "active_voice" (
+				"author_id"	INTEGER,
+				"channel_id"	INTEGER
+			);
+			""",
+        ],
+        "blocklist": [
+            "SELECT channel_id,user_id FROM blocklist",
+            "DROP TABLE blocklist",
+            """
+			CREATE TABLE "blocklist" (
+				"channel_id"	INTEGER,
+				"user_id"	INTEGER
+			);
+			""",
+        ],
+        "whitelist": [
+            "SELECT channel_id,user_id FROM whitelist",
+            "DROP TABLE whitelist",
+            """
+			CREATE TABLE "whitelist" (
+				"channel_id"	INTEGER,
+				"user_id"	INTEGER
+			);
+			""",
         ],
     }
     curs = database.cursor()
