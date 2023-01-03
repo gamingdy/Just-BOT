@@ -81,7 +81,7 @@ class AutoVoice(commands.Cog):
         database.commit()
         await ctx.respond("Auto voice are now disable in this guild")
 
-    @auto_voice.command(description="Change name of current voice channel", name="name")
+    @auto_voice.command(description="Change name of current voice channel")
     @commands.check(connected_admin)
     @commands.cooldown(rate=1, per=60, type=commands.BucketType.member)
     async def name(self, ctx, name: str):
@@ -89,6 +89,42 @@ class AutoVoice(commands.Cog):
         await ctx.author.voice.channel.edit(name=name)
         await ctx.respond(
             f"The new channel name is `{name}`. You will be able to modify it in <t:{cooldown_time}:R>"
+        )
+
+    @auto_voice.command(description="Add user to voice channel block list")
+    @commands.check(connected_admin)
+    async def block(self, ctx, user: discord.Member):
+        user_id = user.id
+        voice_channel = ctx.author.voice.channel.id
+        cursor = database.cursor()
+        cursor.execute(
+            "INSERT INTO blocklist (channel_id, user_id) VALUES (?,?) ",
+            (
+                voice_channel,
+                user_id,
+            ),
+        )
+        database.commit()
+        await ctx.respond(
+            f"{user.mention} is now blocklisted in channel <#{voice_channel}>"
+        )
+
+    @auto_voice.command(description="Add user to voice channel white list")
+    @commands.check(connected_admin)
+    async def whitelist(self, ctx, user: discord.Member):
+        user_id = user.id
+        voice_channel = ctx.author.voice.channel.id
+        cursor = database.cursor()
+        cursor.execute(
+            "INSERT INTO whitelist (channel_id, user_id) VALUES (?,?) ",
+            (
+                voice_channel,
+                user_id,
+            ),
+        )
+        database.commit()
+        await ctx.respond(
+            f"{user.mention} is now whitelisted in channel <#{voice_channel}>"
         )
 
 
