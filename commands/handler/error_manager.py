@@ -1,5 +1,6 @@
 import traceback
 
+import discord
 from discord.ext import commands
 
 from Utils.funct import create_embed, get_traceback_info
@@ -23,7 +24,7 @@ class ErrorHandler(commands.Cog):
             NotConnectedInVoiceChannel,
             NotVoiceChannelAdmin,
         )
-        embed_message = create_embed("AN ERROR OCCURRED 😔")
+        embed_message = create_embed("AN ERROR OCCURRED 😔", color=discord.Colour.red())
         if isinstance(error, error_list):
             embed_message.description = f"**{str(error)}**"
             await ctx.respond(embed=embed_message, ephemeral=True)
@@ -40,34 +41,32 @@ class ErrorHandler(commands.Cog):
 
             await ctx.respond(embed=embed_message, ephemeral=True)
 
-        """
-		else:
+        else:
 
-			embed_message.description = "Oh, it seems that an unknown error occurred, no worries, a very explicit message has been sent to the dev to solve the problem👌."
-			await ctx.respond(embed=embed_message, ephemeral=True)
+            embed_message.description = "Oh, it seems that an unknown error occurred, no worries, a very explicit message has been sent to the dev to solve the problem👌."
+            await ctx.respond(embed=embed_message, ephemeral=True)
 
-			failed_command = ctx.command
-			bot_info = await self.bot.application_info()
-			traceback_error = traceback.format_exception(
-				type(error), error, error.__traceback__
-			)
-			file_name, line, bad_code = get_traceback_info(traceback_error)
+            failed_command = ctx.command
+            bot_info = await self.bot.application_info()
+            traceback_error = traceback.format_exception(
+                type(error), error, error.__traceback__
+            )
+            file_name, line, bad_code = get_traceback_info(traceback_error)
 
-			embed_message.description = "Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the  solution 🙃. Here is the problematic command and the error."
+            embed_message.description = "Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the  solution 🙃. Here is the problematic command and the error."
 
-			embed_message.add_field(
-				name="🛠 Command", value=failed_command, inline=False
-			)
-			embed_message.add_field(name="👾 Error", value=error, inline=False)
-			embed_message.add_field(
-				name="🗒️ Traceback",
-				value="**File** : {} {}\n**Code** : {}".format(
-					file_name, line, bad_code
-				),
-			)
-			print(error)
-			# await bot_info.owner.send(embed=embed_message)
-		"""
+            embed_message.add_field(
+                name="🛠 Command", value=failed_command, inline=False
+            )
+            embed_message.add_field(name="👾 Error", value=error, inline=False)
+            embed_message.add_field(
+                name="🗒️ Traceback",
+                value="**File** : {} {}\n**Code** : {}".format(
+                    file_name, line, bad_code
+                ),
+            )
+            # await bot_info.owner.send(embed=embed_message)
+            await ctx.respond(embed=embed_message)
 
 
 def setup(bot):
