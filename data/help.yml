@@ -5,13 +5,13 @@ Slowmode:
             description: Enable slowmode for a user or a role with a delay in sec, in the active channel.
             warn: This command requires the manage_message permission
             args:
-                target: Guild members or role
+                target: Guild member or role
                 slowmode_delay: Slowmode duration in seconds
         disable:
             description: Disable slowmode for a user or role, in the active channel.
             warn: This command requires the manage_message permission
             args:
-                target: Guild members or role
+                target: Guild member or role
         list:
             description: List the users in slowmode, in the active channel.
             warn: This command requires the manage_message permission
@@ -34,17 +34,32 @@ Tools:
         ui:
             description: Display information about a user or the command author
             args:
-                member: Guild Members
+                member: Guild Member
 
 Voice:
     description: Voice command
     commands:
         config:
             description: Configure auto voice channel on current guild
-            warn: In progress
+            warn: Only guild owner can use this command
+            args:
+                channel: Guild channel 
         disable:
             description : Disable auto voice channel on current guild
-            warn: In progress
+            warn: Only guild owner can use this command
         name:
-            description: Change name of connected voice channel
-            warn: In progress
+            description: Change name of current voice channel
+            warn: You must be connected in voice channel and be admin
+            args:
+                name: Channel name
+        block:
+            description: Add user to voice channel block list
+            warn: You must be connected in voice channel and be admin
+            args:
+                user: Guild member
+        whitelist:
+            description: Add user to voice channel white list
+            warn: You must be connected in voice channel and be admin
+            args:
+                user: Guild member
+
