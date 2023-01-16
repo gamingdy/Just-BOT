@@ -1,0 +1,50 @@
+Slowmode:
+    description: List of commands to manage the slowmode, you must do `/slowmode <command_name>` to use them.
+    commands:
+        enable:
+            description: Enable slowmode for a user or a role with a delay in sec, in the active channel.
+            warn: This command requires the manage_message permission
+            args:
+                target: Guild members or role
+                slowmode_delay: Slowmode duration in seconds
+        disable:
+            description: Disable slowmode for a user or role, in the active channel.
+            warn: This command requires the manage_message permission
+            args:
+                target: Guild members or role
+        list:
+            description: List the users in slowmode, in the active channel.
+            warn: This command requires the manage_message permission
+
+Info:
+    description: All information about bot
+    commands:
+        ping:
+            description: Display bot's ping.
+        help:
+            description: Display bot's help.
+            args:
+                command_group: The name of a group of commands
+        info:
+            description: Displays bot's info
+
+Tools:
+    description: Available tools
+    commands:
+        ui:
+            description: Display information about a user or the command author
+            args:
+                member: Guild Members
+
+Voice:
+    description: Voice command
+    commands:
+        config:
+            description: Configure auto voice channel on current guild
+            warn: In progress
+        disable:
+            description : Disable auto voice channel on current guild
+            warn: In progress
+        name:
+            description: Change name of connected voice channel
+            warn: In progress

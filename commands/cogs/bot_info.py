@@ -1,8 +1,8 @@
-import json
 from datetime import datetime
 
 from discord.commands import slash_command, option
 from discord.ext import commands
+from yaml import safe_load
 
 import Utils.funct as fonction
 
@@ -10,8 +10,8 @@ import Utils.funct as fonction
 class BotInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        with open("data/help.json", encoding="utf8") as help_file:
-            self.commands_help = json.load(help_file)
+        with open("data/help.yml", encoding="utf8") as help_file:
+            self.commands_help = safe_load(help_file)
 
     async def get_command_group(self, ctx):
         return [
@@ -42,15 +42,33 @@ class BotInfo(commands.Cog):
         if command_group:
             if command_group in self.commands_help:
                 category = self.commands_help[command_group]
-                category_command = category[1]
+                category_commands = category["commands"]
 
-                help_embed.title = "{}'s help".format(command_group.capitalize())
-                help_embed.description = category[0]
+                for command in category_commands:
+                    warn = ""
+                    if "warn" in category_commands[command]:
+                        warn = f"**:warning: {category_commands[command]['warn']} :warning:**"
 
-                for command in category_command:
+                    arguments = "__This command does not take any argument__"
+                    if "args" in category_commands[command]:
+                        arguments = "__Arguments__:\n"
+                        all_args = []
+                        for args in category_commands[command]["args"]:
+                            all_args.append(
+                                f"`{args}` ({category_commands[command]['args'][args]})"
+                            )
+                        arguments += ", ".join(all_args)
+
+                    description = category_commands[command]["description"]
                     help_embed.add_field(
-                        name=command, value=category_command[command], inline=False
+                        name=command,
+                        value=f"{warn}\n{description}\n\n{arguments}",
+                        inline=False,
                     )
+
+                help_embed.title = command_group.capitalize()
+                help_embed.description = category["description"]
+
             else:
                 help_embed.description = (
                     f":warning:**The category `{command_group.capitalize()}` is not found**\n\n "
@@ -60,9 +78,12 @@ class BotInfo(commands.Cog):
             help_embed.description = (
                 "You can do `/help <category>` to get help about a category"
             )
+
             for group in self.commands_help:
                 help_embed.add_field(
-                    name=group, value=self.commands_help[group][0], inline=False
+                    name=group,
+                    value=self.commands_help[group]["description"],
+                    inline=False,
                 )
 
         await ctx.respond(embed=help_embed)

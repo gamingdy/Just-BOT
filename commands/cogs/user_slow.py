@@ -17,7 +17,7 @@ class ManageSlowmode(commands.Cog):
     slowmode_commands = SlashCommandGroup("slowmode", "Manage channel slowmode")
 
     async def add_user_in_field(
-            self, emb_message, list_user, field_value, bin_message=None, user_info=None
+        self, emb_message, list_user, field_value, bin_message=None, user_info=None
     ):
         for keys, user in enumerate(list_user):
             if keys < 5:
@@ -49,7 +49,7 @@ class ManageSlowmode(commands.Cog):
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
     async def enable(
-            self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
+        self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
     ):
         if isinstance(target, discord.Role):
             target_list = target.members
@@ -98,9 +98,7 @@ class ManageSlowmode(commands.Cog):
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
     async def disable(self, ctx, target: typing.Union[discord.User, discord.Role]):
-        target_list = (
-            target.members if isinstance(target, discord.Role) else [target]
-        )
+        target_list = target.members if isinstance(target, discord.Role) else [target]
 
         channel = ctx.channel
         bot_status = await ctx.respond(
@@ -142,7 +140,7 @@ class ManageSlowmode(commands.Cog):
         my_embed = create_embed("Slowmode list")
         if element:
             my_embed.description = f"*List of active slowmode in #{element[0][2]}*"
-            all_page = [element[i: i + 5] for i in range(0, len(element), 5)]
+            all_page = [element[i : i + 5] for i in range(0, len(element), 5)]
 
             all_page = list(
                 map(
