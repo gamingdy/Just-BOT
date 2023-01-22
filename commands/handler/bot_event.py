@@ -36,9 +36,11 @@ class VoiceHandler(commands.Cog):
         old_chan = self.bot.get_channel(before.channel.id)
         meb = old_chan.voice_states
         if len(meb) == 0 and old_chan.id != auto_chan:
-            database.cursor().execute(
-                "DELETE FROM active_voice WHERE channel_id=(?)", (old_chan.id,)
-            )
+            tables = ["active_voice", "blocklist", "whitelist"]
+            for table in tables:
+                database.cursor().execute(
+                    f"DELETE FROM {table} WHERE channel_id=(?)", (old_chan.id,)
+                )
             database.commit()
             await old_chan.delete()
 
