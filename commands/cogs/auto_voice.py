@@ -94,7 +94,6 @@ class AutoVoice(commands.Cog):
     @auto_voice.command(description="Add user to voice channel block list")
     @commands.check(connected_admin)
     async def block(self, ctx, user: discord.Member):
-        user_id = user.id
         voice_channel = ctx.author.voice.channel
 
         cursor = database.cursor()
@@ -102,7 +101,7 @@ class AutoVoice(commands.Cog):
             "SELECT * FROM blocklist WHERE channel_id=(?) AND user_id=(?)",
             (
                 voice_channel.id,
-                user_id,
+                user.id,
             ),
         ).fetchone()
         if is_blocked:
@@ -112,7 +111,7 @@ class AutoVoice(commands.Cog):
                 "SELECT * FROM whitelist WHERE channel_id=(?) AND user_id=(?)",
                 (
                     voice_channel.id,
-                    user_id,
+                    user.id,
                 ),
             ).fetchone()
             warn = ""
@@ -121,7 +120,7 @@ class AutoVoice(commands.Cog):
                     "DELETE FROM whitelist WHERE channel_id=(?) AND user_id=(?)",
                     (
                         voice_channel.id,
-                        user_id,
+                        user.id,
                     ),
                 )
                 warn = ":warning: **The user was whitelisted and has been removed**"
@@ -130,7 +129,7 @@ class AutoVoice(commands.Cog):
                 "INSERT INTO blocklist (channel_id, user_id) VALUES (?,?) ",
                 (
                     voice_channel.id,
-                    user_id,
+                    user.id,
                 ),
             )
             database.commit()
@@ -143,7 +142,6 @@ class AutoVoice(commands.Cog):
     @auto_voice.command(description="Add user to voice channel white list")
     @commands.check(connected_admin)
     async def whitelist(self, ctx, user: discord.Member):
-        user_id = user.id
         voice_channel = ctx.author.voice.channel
 
         cursor = database.cursor()
@@ -151,7 +149,7 @@ class AutoVoice(commands.Cog):
             "SELECT * FROM whitelist WHERE channel_id=(?) AND user_id=(?)",
             (
                 voice_channel.id,
-                user_id,
+                user.id,
             ),
         ).fetchone()
         if is_whitelisted:
@@ -161,7 +159,7 @@ class AutoVoice(commands.Cog):
                 "SELECT * FROM blocklist WHERE channel_id=(?) AND user_id=(?)",
                 (
                     voice_channel.id,
-                    user_id,
+                    user.id,
                 ),
             ).fetchone()
             warn = ""
@@ -170,7 +168,7 @@ class AutoVoice(commands.Cog):
                     "DELETE FROM blocklist WHERE channel_id=(?) AND user_id=(?)",
                     (
                         voice_channel.id,
-                        user_id,
+                        user.id,
                     ),
                 )
                 warn = ":warning: **The user was blocklisted and has been removed**"
@@ -179,7 +177,7 @@ class AutoVoice(commands.Cog):
                 "INSERT INTO whitelist (channel_id, user_id) VALUES (?,?) ",
                 (
                     voice_channel.id,
-                    user_id,
+                    user.id,
                 ),
             )
             database.commit()
