@@ -134,6 +134,12 @@ class AutoVoice(commands.Cog):
             )
             database.commit()
             message = f"{warn}\n\n{user.mention} is now blocklisted in channel <#{voice_channel.id}>"
+
+        await voice_channel.set_permissions(user, connect=False)
+        if user.voice:
+            if user.voice.channel.id == voice_channel.id:
+                await user.move_to(None)
+
         embed = create_embed(
             title="Blocklist update", description=message, color=discord.Color.red()
         )
@@ -182,8 +188,14 @@ class AutoVoice(commands.Cog):
             )
             database.commit()
             message = f"{warn}\n\n{user.mention} is now whitelisted in channel <#{voice_channel.id}>"
+
+        await voice_channel.set_permissions(user, connect=True)
+
         color = discord.Colour.from_rgb(255, 128, 243)
         embed = create_embed(title="Whitelist update", description=message, color=color)
+
+        await ctx.respond(embed=embed)
+
         await ctx.respond(embed=embed)
 
 
