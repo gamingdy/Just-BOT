@@ -51,7 +51,7 @@ class ErrorHandler(commands.Cog):
             traceback_error = traceback.format_exception(
                 type(error), error, error.__traceback__
             )
-            file_name, line, bad_code = get_traceback_info(traceback_error)
+            file_name, line, command, code = get_traceback_info(traceback_error)
 
             embed_message.description = "Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the  solution 🙃. Here is the problematic command and the error."
 
@@ -61,9 +61,7 @@ class ErrorHandler(commands.Cog):
             embed_message.add_field(name="👾 Error", value=error, inline=False)
             embed_message.add_field(
                 name="🗒️ Traceback",
-                value="**File** : {} {}\n**Code** : {}".format(
-                    file_name, line, bad_code
-                ),
+                value=f"**File** : `{file_name}` {line}\n**Code** : {command}\n```py\n{code}```",
             )
             # await bot_info.owner.send(embed=embed_message)
             await ctx.respond(embed=embed_message)

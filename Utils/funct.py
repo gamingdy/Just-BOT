@@ -47,12 +47,13 @@ def verify_db():
             """,
         ],
         "active_voice": [
-            "SELECT author_id,channel_id FROM active_voice",
+            "SELECT author_id,channel_id,open FROM active_voice",
             "DROP TABLE active_voice",
             """
             CREATE TABLE "active_voice" (
                 "author_id" INTEGER,
-                "channel_id"    INTEGER
+                "channel_id"    INTEGER,
+                "open" BOOLEAN
             );
             """,
         ],
@@ -146,6 +147,6 @@ def get_traceback_info(traceback_error):
     traceback_error = traceback_error[:end_of_traceback]
     file_name = traceback_error[-2].split(",")[0].replace("\\", "/").split("/")[-1][:-1]
     line = traceback_error[-2].split(",")[1]
-    bad_code = "".join(traceback_error[-2].split(",")[2:])
+    command, code = "".join(traceback_error[-2].split(",")[2:])[:-1].split("\n")
 
-    return file_name, line, bad_code
+    return file_name, line, command, code.lstrip()
