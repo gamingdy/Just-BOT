@@ -261,5 +261,42 @@ class AutoVoice(commands.Cog):
         embed = create_embed(title="Whitelist update", description=message)
         await ctx.respond(embed=embed)
 
+    @auto_voice.command(description="Set current channel as private channel")
+    @commands.check(connected_admin)
+    async def private(self, ctx):
+        voice_channel = ctx.author.voice.channel
+        cursor = database.cursor()
+        cursor.execute(
+            "UPDATE active_voice SET open=(?) WHERE channel_id=(?)",
+            (
+                False,
+                voice_channel.id,
+            ),
+        )
+        database.commit()
+        everyone_role = ctx.guild.default_role
+        await voice_channel.set_permissions(everyone_role, connect=False)
+        embed = create_embed("Channel Update", description="The channel is now private")
+
+        await ctx.respond(embed=embed)
+
+    @auto_voice.command(description="Set current channel as public channel")
+    @commands.check(connected_admin)
+    async def public(self, ctx):
+        voice_channel = ctx.author.voice.channel
+        cursor = database.cursor()
+        cursor.execute(
+            "UPDATE active_voice SET open=(?) WHERE channel_id=(?)",
+            (
+                True,
+                voice_channel.id,
+            ),
+        )
+        database.commit()
+        everyone_role = ctx.guild.default_role
+        await voice_channel.set_permissions(everyone_role, connect=None)
+        embed = create_embed("Channel Update", description="The channel is now public")
+
+        await ctx.respond(embed=embed)
 def setup(bot):
     bot.add_cog(AutoVoice(bot))
