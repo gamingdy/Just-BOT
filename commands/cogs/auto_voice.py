@@ -18,6 +18,12 @@ class AutoVoice(commands.Cog):
         self.bot = bot
 
     auto_voice = SlashCommandGroup(name="voice", description="Auto voice command")
+    blocklist = auto_voice.create_subgroup(
+        name="block", description="Manage blocklist channel"
+    )
+    whitelist = auto_voice.create_subgroup(
+        name="white", description="Manage whitelist channel"
+    )
 
     async def connected_admin(ctx):
         voice_state = ctx.author.voice
@@ -91,9 +97,9 @@ class AutoVoice(commands.Cog):
             f"The new channel name is `{name}`. You will be able to modify it in <t:{cooldown_time}:R>"
         )
 
-    @auto_voice.command(description="Add user to voice channel block list")
+    @blocklist.command(description="Add user to voice channel block list")
     @commands.check(connected_admin)
-    async def block(self, ctx, user: discord.Member):
+    async def add(self, ctx, user: discord.Member):
         voice_channel = ctx.author.voice.channel
 
         cursor = database.cursor()
@@ -135,19 +141,19 @@ class AutoVoice(commands.Cog):
             database.commit()
             message = f"{warn}\n\n{user.mention} is now blocklisted in channel <#{voice_channel.id}>"
 
-        await voice_channel.set_permissions(user, connect=False)
-        if user.voice:
-            if user.voice.channel.id == voice_channel.id:
-                await user.move_to(None)
+            await voice_channel.set_permissions(user, connect=False)
+            if user.voice:
+                if user.voice.channel.id == voice_channel.id:
+                    await user.move_to(None)
 
         embed = create_embed(
             title="Blocklist update", description=message, color=discord.Color.red()
         )
         await ctx.respond(embed=embed)
 
-    @auto_voice.command(description="Add user to voice channel white list")
+    @whitelist.command(description="Add user to voice channel whitelist")
     @commands.check(connected_admin)
-    async def whitelist(self, ctx, user: discord.Member):
+    async def add(self, ctx, user: discord.Member):
         voice_channel = ctx.author.voice.channel
 
         cursor = database.cursor()
@@ -196,9 +202,9 @@ class AutoVoice(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    @auto_voice.command(description="Remove user from channel blocklist")
+    @blocklist.command(description="Remove user from channel blocklist")
     @commands.check(connected_admin)
-    async def ublock(self, ctx, user: discord.Member):
+    async def remove(self, ctx, user: discord.Member):
         voice_channel = ctx.author.voice.channel
         cursor = database.cursor()
 
@@ -230,9 +236,9 @@ class AutoVoice(commands.Cog):
         embed = create_embed(title="Blocklist update", description=message)
         await ctx.respond(embed=embed)
 
-    @auto_voice.command(description="Remove user from channel whitelist")
+    @whitelist.command(description="Remove user from channel whitelist")
     @commands.check(connected_admin)
-    async def uwhite(self, ctx, user: discord.Member):
+    async def remove(self, ctx, user: discord.Member):
         voice_channel = ctx.author.voice.channel
         cursor = database.cursor()
         is_whitelisted = cursor.execute(
