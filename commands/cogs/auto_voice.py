@@ -304,5 +304,53 @@ class AutoVoice(commands.Cog):
         embed = create_embed("Channel Update", description="The channel is now public")
 
         await ctx.respond(embed=embed)
+
+    @blocklist.command(description="Show current channel blocklist")
+    @commands.check(connected_admin)
+    async def list(self, ctx):
+        voice_channel = ctx.author.voice.channel
+        cursor = database.cursor()
+        blocked = cursor.execute(
+            "SELECT user_id FROM blocklist WHERE channel_id=(?)", (voice_channel.id,)
+        ).fetchall()
+
+        if blocked:
+            message = f"Active bloclklist in {voice_channel.mention}"
+            user_list = []
+            for row in blocked:
+                user = ctx.guild.get_member(row[0]).mention
+                user_list.append(user)
+
+            message += f"\n\n{','.join(user_list)}"
+        else:
+            message = "No blocklisted user in this channel"
+
+        embed = create_embed("Blocklist", message)
+        await ctx.respond(embed=embed)
+
+    @whitelist.command(description="Show current channel whitelist")
+    @commands.check(connected_admin)
+    async def list(self, ctx):
+        voice_channel = ctx.author.voice.channel
+        cursor = database.cursor()
+        whitelisted = cursor.execute(
+            "SELECT user_id FROM whitelist WHERE channel_id=(?)", (voice_channel.id,)
+        ).fetchall()
+
+        if whitelisted:
+            message = f"Active whitelist in {voice_channel.mention}"
+            user_list = []
+            for row in whitelisted:
+                user = ctx.guild.get_member(row[0]).mention
+                user_list.append(user)
+
+            message += f"\n\n{','.join(user_list)}"
+        else:
+            message = "No whitelisted user in this channel"
+
+        embed = create_embed("Blocklist", message)
+        await ctx.respond(embed=embed)
+
+
 def setup(bot):
     bot.add_cog(AutoVoice(bot))
