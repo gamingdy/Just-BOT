@@ -77,3 +77,16 @@ async def remove_user(channel, user, target):
         await channel.set_permissions(user, overwrite=None)
 
     return message
+
+
+async def update_channel(channel, everyone, status):
+    cursor = database.cursor()
+    cursor.execute(
+        "UPDATE active_voice SET open=(?) WHERE channel_id=(?)",
+        (
+            status,
+            channel.id,
+        ),
+    )
+    database.commit()
+    await channel.set_permissions(everyone, connect=None if status else False)

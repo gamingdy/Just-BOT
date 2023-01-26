@@ -11,7 +11,7 @@ from Utils.custom_error import (
     NotConnectedInVoiceChannel,
     NotVoiceChannelAdmin,
 )
-from Utils.voice_tools import add_user, remove_user
+from Utils.voice_tools import add_user, remove_user, update_channel
 
 
 class AutoVoice(commands.Cog):
@@ -157,17 +157,8 @@ class AutoVoice(commands.Cog):
     @commands.check(connected_admin)
     async def private(self, ctx):
         voice_channel = ctx.author.voice.channel
-        cursor = database.cursor()
-        cursor.execute(
-            "UPDATE active_voice SET open=(?) WHERE channel_id=(?)",
-            (
-                False,
-                voice_channel.id,
-            ),
-        )
-        database.commit()
         everyone_role = ctx.guild.default_role
-        await voice_channel.set_permissions(everyone_role, connect=False)
+        await update_channel(voice_channel, everyone_role, False)
         embed = create_embed("Channel Update", description="The channel is now private")
 
         await ctx.respond(embed=embed)
@@ -176,17 +167,8 @@ class AutoVoice(commands.Cog):
     @commands.check(connected_admin)
     async def public(self, ctx):
         voice_channel = ctx.author.voice.channel
-        cursor = database.cursor()
-        cursor.execute(
-            "UPDATE active_voice SET open=(?) WHERE channel_id=(?)",
-            (
-                True,
-                voice_channel.id,
-            ),
-        )
-        database.commit()
         everyone_role = ctx.guild.default_role
-        await voice_channel.set_permissions(everyone_role, connect=None)
+        await update_channel(voice_channel, everyone_role, True)
         embed = create_embed("Channel Update", description="The channel is now public")
 
         await ctx.respond(embed=embed)
