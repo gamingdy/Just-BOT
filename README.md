@@ -10,7 +10,6 @@ Good evening, welcome on the main page of Just-BOT
 
 
 Just-BOT is a Discord bot with a lot of feature
-[![Contributors][contributors-shield]]
 
 
 ## Summary
