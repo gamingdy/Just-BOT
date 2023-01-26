@@ -11,7 +11,7 @@ from Utils.custom_error import (
     NotConnectedInVoiceChannel,
     NotVoiceChannelAdmin,
 )
-from Utils.voice_tools import add_user, remove_user, update_channel
+from Utils.voice_tools import add_user, remove_user, update_channel, channel_list
 
 
 class AutoVoice(commands.Cog):
@@ -177,21 +177,7 @@ class AutoVoice(commands.Cog):
     @commands.check(connected_admin)
     async def list(self, ctx):
         voice_channel = ctx.author.voice.channel
-        cursor = database.cursor()
-        blocked = cursor.execute(
-            "SELECT user_id FROM blocklist WHERE channel_id=(?)", (voice_channel.id,)
-        ).fetchall()
-
-        if blocked:
-            message = f"Active bloclklist in {voice_channel.mention}"
-            user_list = []
-            for row in blocked:
-                user = ctx.guild.get_member(row[0]).mention
-                user_list.append(user)
-
-            message += f"\n\n{','.join(user_list)}"
-        else:
-            message = "No blocklisted user in this channel"
+        message = channel_list(voice_channel, ctx.guild, "blocklist")
 
         embed = create_embed("Blocklist", message)
         await ctx.respond(embed=embed)
@@ -200,23 +186,8 @@ class AutoVoice(commands.Cog):
     @commands.check(connected_admin)
     async def list(self, ctx):
         voice_channel = ctx.author.voice.channel
-        cursor = database.cursor()
-        whitelisted = cursor.execute(
-            "SELECT user_id FROM whitelist WHERE channel_id=(?)", (voice_channel.id,)
-        ).fetchall()
-
-        if whitelisted:
-            message = f"Active whitelist in {voice_channel.mention}"
-            user_list = []
-            for row in whitelisted:
-                user = ctx.guild.get_member(row[0]).mention
-                user_list.append(user)
-
-            message += f"\n\n{','.join(user_list)}"
-        else:
-            message = "No whitelisted user in this channel"
-
-        embed = create_embed("Blocklist", message)
+        message = channel_list(voice_channel, ctx.guild, "whitelist")
+        embed = create_embed("Whitelist", message)
         await ctx.respond(embed=embed)
 
 

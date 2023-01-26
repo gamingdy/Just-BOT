@@ -51,7 +51,7 @@ def add_user(channel, user, target):
 async def remove_user(channel, user, target):
     cursor = database.cursor()
 
-    is_blocked = cursor.execute(
+    is_listed = cursor.execute(
         f"SELECT * FROM {target} WHERE channel_id=(?) AND user_id=(?)",
         (
             channel.id,
@@ -59,7 +59,7 @@ async def remove_user(channel, user, target):
         ),
     ).fetchone()
 
-    if not is_blocked:
+    if not is_listed:
         message = f"User is not {target}ed"
     else:
 
@@ -90,3 +90,23 @@ async def update_channel(channel, everyone, status):
     )
     database.commit()
     await channel.set_permissions(everyone, connect=None if status else False)
+
+
+def channel_list(channel, guild, target):
+    cursor = database.cursor()
+    listed = cursor.execute(
+        f"SELECT user_id FROM {target} WHERE channel_id=(?)", (channel.id,)
+    ).fetchall()
+
+    if listed:
+        message = f"Active {target} in {channel.mention}"
+        user_list = []
+        for row in listed:
+            user = guild.get_member(row[0]).mention
+            user_list.append(user)
+
+        message += f"\n\n{','.join(user_list)}"
+    else:
+        message = f"No {target}ed user in this channel"
+
+    return message
