@@ -152,7 +152,9 @@ class ManageSlowmode(commands.Cog):
             generate_page(my_embed, *iter(all_page[0]))
             my_embed.set_footer(text=f"Page 1/{len(all_page)}")
 
-            my_navigation = PageNavigation(len(all_page), all_page, my_embed)
+            my_navigation = PageNavigation(
+                len(all_page), all_page, my_embed, ctx.author
+            )
             await ctx.respond(embed=my_embed, view=my_navigation)
         else:
             my_embed.description = "**No slowmode users in this channel**"
