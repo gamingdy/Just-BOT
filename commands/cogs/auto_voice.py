@@ -11,6 +11,7 @@ from Utils.custom_error import (
     NotConnectedInVoiceChannel,
     NotVoiceChannelAdmin,
 )
+from Utils.voice_tools import add_user
 
 
 class AutoVoice(commands.Cog):
@@ -102,49 +103,17 @@ class AutoVoice(commands.Cog):
     async def add(self, ctx, user: discord.Member):
         voice_channel = ctx.author.voice.channel
 
-        cursor = database.cursor()
-        is_blocked = cursor.execute(
-            "SELECT * FROM blocklist WHERE channel_id=(?) AND user_id=(?)",
-            (
-                voice_channel.id,
-                user.id,
-            ),
-        ).fetchone()
-        if is_blocked:
-            message = "User is already blocked and can't be blocked twice 😀"
-        else:
-            is_whitelisted = cursor.execute(
-                "SELECT * FROM whitelist WHERE channel_id=(?) AND user_id=(?)",
-                (
-                    voice_channel.id,
-                    user.id,
-                ),
-            ).fetchone()
-            warn = ""
-            if is_whitelisted:
-                cursor.execute(
-                    "DELETE FROM whitelist WHERE channel_id=(?) AND user_id=(?)",
-                    (
-                        voice_channel.id,
-                        user.id,
-                    ),
-                )
-                warn = ":warning: **The user was whitelisted and has been removed**"
+        block_user = add_user(voice_channel, user, "blocklist")
 
-            cursor.execute(
-                "INSERT INTO blocklist (channel_id, user_id) VALUES (?,?) ",
-                (
-                    voice_channel.id,
-                    user.id,
-                ),
-            )
-            database.commit()
-            message = f"{warn}\n\n{user.mention} is now blocklisted in channel <#{voice_channel.id}>"
-
+        if block_user["result"]:
+            message = block_user["msg"]
             await voice_channel.set_permissions(user, connect=False)
             if user.voice:
                 if user.voice.channel.id == voice_channel.id:
                     await user.move_to(None)
+
+        else:
+            message = "User is already blocked and can't be blocked twice 😀"
 
         embed = create_embed(
             title="Blocklist update", description=message, color=discord.Color.red()
@@ -155,47 +124,13 @@ class AutoVoice(commands.Cog):
     @commands.check(connected_admin)
     async def add(self, ctx, user: discord.Member):
         voice_channel = ctx.author.voice.channel
+        whitelist_user = add_user(voice_channel, user, "whitelist")
 
-        cursor = database.cursor()
-        is_whitelisted = cursor.execute(
-            "SELECT * FROM whitelist WHERE channel_id=(?) AND user_id=(?)",
-            (
-                voice_channel.id,
-                user.id,
-            ),
-        ).fetchone()
-        if is_whitelisted:
+        if not whitelist_user["result"]:
             message = "User is already whitelisted"
         else:
-            is_blocked = cursor.execute(
-                "SELECT * FROM blocklist WHERE channel_id=(?) AND user_id=(?)",
-                (
-                    voice_channel.id,
-                    user.id,
-                ),
-            ).fetchone()
-            warn = ""
-            if is_blocked:
-                cursor.execute(
-                    "DELETE FROM blocklist WHERE channel_id=(?) AND user_id=(?)",
-                    (
-                        voice_channel.id,
-                        user.id,
-                    ),
-                )
-                warn = ":warning: **The user was blocklisted and has been removed**"
-
-            cursor.execute(
-                "INSERT INTO whitelist (channel_id, user_id) VALUES (?,?) ",
-                (
-                    voice_channel.id,
-                    user.id,
-                ),
-            )
-            database.commit()
-            message = f"{warn}\n\n{user.mention} is now whitelisted in channel <#{voice_channel.id}>"
-
-        await voice_channel.set_permissions(user, connect=True)
+            message = whitelist_user["msg"]
+            await voice_channel.set_permissions(user, connect=True)
 
         color = discord.Colour.from_rgb(255, 128, 243)
         embed = create_embed(title="Whitelist update", description=message, color=color)
