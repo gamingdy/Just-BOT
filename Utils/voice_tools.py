@@ -1,4 +1,26 @@
 from config import database
+from Utils.custom_error import (
+    NotConnectedInVoiceChannel,
+    NotVoiceChannelAdmin,
+)
+
+
+async def connected_admin(ctx):
+    voice_state = ctx.author.voice
+    if voice_state:
+        voice_cursor = database.cursor()
+        is_admin = voice_cursor.execute(
+            "SELECT channel_id FROM active_voice WHERE author_id=(?)",
+            (ctx.author.id,),
+        ).fetchall()
+        if len(is_admin) > 0:
+            for channel in is_admin:
+                if channel[0] == voice_state.channel.id:
+                    return True
+        else:
+            raise NotVoiceChannelAdmin("You are not channel admin")
+
+    raise NotConnectedInVoiceChannel("You are not connected in voice channel")
 
 
 def add_user(channel, user, target):

@@ -6,11 +6,7 @@ from discord.ext import commands
 
 from config import database
 from Utils.funct import create_embed
-from Utils.custom_error import (
-    NotGuildOwner,
-    NotConnectedInVoiceChannel,
-    NotVoiceChannelAdmin,
-)
+from Utils.custom_error import NotGuildOwner
 from Utils.voice_tools import add_user, remove_user, update_channel, channel_list
 
 
@@ -26,27 +22,10 @@ class AutoVoice(commands.Cog):
         name="white", description="Manage whitelist channel"
     )
 
-    async def connected_admin(ctx):
-        voice_state = ctx.author.voice
-        if voice_state:
-            voice_cursor = database.cursor()
-            is_admin = voice_cursor.execute(
-                "SELECT channel_id FROM active_voice WHERE author_id=(?)",
-                (ctx.author.id,),
-            ).fetchall()
-            if len(is_admin) > 0:
-                for channel in is_admin:
-                    if channel[0] == voice_state.channel.id:
-                        return True
-            else:
-                raise NotVoiceChannelAdmin("You are not channel admin")
-
-        raise NotConnectedInVoiceChannel("You are not connected in voice channel")
-
     async def guild_owner(ctx):
         if ctx.guild.owner_id == ctx.author.id:
             return True
-        raise NotGuildOwner("You are not guild owner ")
+        raise NotGuildOwner("You are not guild owner")
 
     @auto_voice.command(description="Configure auto voice channel")
     @commands.check(guild_owner)
@@ -178,7 +157,6 @@ class AutoVoice(commands.Cog):
     async def list(self, ctx):
         voice_channel = ctx.author.voice.channel
         message = channel_list(voice_channel, ctx.guild, "blocklist")
-
         embed = create_embed("Blocklist", message)
         await ctx.respond(embed=embed)
 
