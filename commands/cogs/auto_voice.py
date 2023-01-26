@@ -5,9 +5,14 @@ from discord.commands import SlashCommandGroup
 from discord.ext import commands
 
 from config import database
-from Utils.funct import create_embed
-from Utils.custom_error import NotGuildOwner
-from Utils.voice_tools import add_user, remove_user, update_channel, channel_list
+from Utils.funct import create_embed, guild_owner
+from Utils.voice_tools import (
+    add_user,
+    remove_user,
+    update_channel,
+    channel_list,
+    connected_admin,
+)
 
 
 class AutoVoice(commands.Cog):
@@ -21,11 +26,6 @@ class AutoVoice(commands.Cog):
     whitelist = auto_voice.create_subgroup(
         name="white", description="Manage whitelist channel"
     )
-
-    async def guild_owner(ctx):
-        if ctx.guild.owner_id == ctx.author.id:
-            return True
-        raise NotGuildOwner("You are not guild owner")
 
     @auto_voice.command(description="Configure auto voice channel")
     @commands.check(guild_owner)

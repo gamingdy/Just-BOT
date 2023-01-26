@@ -7,6 +7,7 @@ import json
 import discord
 
 from config import database
+from .custom_error import NotGuildOwner
 
 
 def create_embed(title, description=None, color=None, image=None, thumbnail=None):
@@ -150,3 +151,9 @@ def get_traceback_info(traceback_error):
     command, code = "".join(traceback_error[-2].split(",")[2:])[:-1].split("\n")
 
     return file_name, line, command, code.lstrip()
+
+
+async def guild_owner(ctx):
+    if ctx.guild.owner_id == ctx.author.id:
+        return True
+    raise NotGuildOwner("You are not guild owner")
