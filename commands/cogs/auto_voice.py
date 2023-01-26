@@ -11,7 +11,7 @@ from Utils.custom_error import (
     NotConnectedInVoiceChannel,
     NotVoiceChannelAdmin,
 )
-from Utils.voice_tools import add_user
+from Utils.voice_tools import add_user, remove_user
 
 
 class AutoVoice(commands.Cog):
@@ -141,33 +141,7 @@ class AutoVoice(commands.Cog):
     @commands.check(connected_admin)
     async def remove(self, ctx, user: discord.Member):
         voice_channel = ctx.author.voice.channel
-        cursor = database.cursor()
-
-        is_blocked = cursor.execute(
-            "SELECT * FROM blocklist WHERE channel_id=(?) AND user_id=(?)",
-            (
-                voice_channel.id,
-                user.id,
-            ),
-        ).fetchone()
-
-        if not is_blocked:
-            message = "User is not blocklisted"
-        else:
-
-            cursor.execute(
-                "DELETE FROM blocklist WHERE channel_id=(?) and user_id=(?)",
-                (
-                    voice_channel.id,
-                    user.id,
-                ),
-            )
-
-            database.commit()
-
-            message = "User has been removed from blocklist"
-            await voice_channel.set_permissions(user, overwrite=None)
-
+        message = await remove_user(voice_channel, user, "blocklist")
         embed = create_embed(title="Blocklist update", description=message)
         await ctx.respond(embed=embed)
 
@@ -175,30 +149,7 @@ class AutoVoice(commands.Cog):
     @commands.check(connected_admin)
     async def remove(self, ctx, user: discord.Member):
         voice_channel = ctx.author.voice.channel
-        cursor = database.cursor()
-        is_whitelisted = cursor.execute(
-            "SELECT * FROM whitelist WHERE channel_id=(?) AND user_id=(?)",
-            (
-                voice_channel.id,
-                user.id,
-            ),
-        ).fetchone()
-        if not is_whitelisted:
-            message = "User is not whitelisted"
-        else:
-
-            cursor.execute(
-                "DELETE FROM whitelist WHERE channel_id=(?) and user_id=(?)",
-                (
-                    voice_channel.id,
-                    user.id,
-                ),
-            )
-
-            database.commit()
-            message = "User has been removed from whitelist"
-            await voice_channel.set_permissions(user, overwrite=None)
-
+        message = await remove_user(voice_channel, user, "whitelist")
         embed = create_embed(title="Whitelist update", description=message)
         await ctx.respond(embed=embed)
 

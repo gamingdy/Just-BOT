@@ -46,3 +46,34 @@ def add_user(channel, user, target):
         )
 
         return {"result": True, "msg": message}
+
+
+async def remove_user(channel, user, target):
+    cursor = database.cursor()
+
+    is_blocked = cursor.execute(
+        f"SELECT * FROM {target} WHERE channel_id=(?) AND user_id=(?)",
+        (
+            channel.id,
+            user.id,
+        ),
+    ).fetchone()
+
+    if not is_blocked:
+        message = f"User is not {target}ed"
+    else:
+
+        cursor.execute(
+            f"DELETE FROM {target} WHERE channel_id=(?) and user_id=(?)",
+            (
+                channel.id,
+                user.id,
+            ),
+        )
+
+        database.commit()
+
+        message = f"User has been removed from {target}"
+        await channel.set_permissions(user, overwrite=None)
+
+    return message
