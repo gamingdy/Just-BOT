@@ -52,14 +52,39 @@ Voice:
             warn: You must be connected in voice channel and be admin
             args:
                 name: Channel name
-        block:
+                
+        public:
+            description: Set current channel as public channel
+            warn: You must be connected in voice channel and be admin
+        private:
+            description: Set current channel as public channel
+            warn: You must be connected in voice channel and be admin
+
+        block add:
             description: Add user to voice channel block list
             warn: You must be connected in voice channel and be admin
             args:
                 user: Guild member
-        whitelist:
-            description: Add user to voice channel white list
+        white add:
+            description: Add user to voice channel whitelist
             warn: You must be connected in voice channel and be admin
             args:
                 user: Guild member
+
+        block remove:
+            description: Remove user from channel blocklist
+            warn: You must be connected in voice channel and be admin
+            args:
+                user: Guild member
+        white remove:
+            description: Remove user from channel whitelist
+            warn: You must be connected in voice channel and be admin
+            args:
+                user: Guild member
+        
+        block list:
+            description: Show current channel blocklist
+        white list:
+            description: Show current channel blocklist
+
 
