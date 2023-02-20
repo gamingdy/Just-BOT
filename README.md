@@ -94,7 +94,7 @@ C:\> python main.py
 
 If you encounter a bug, you can create an issue, with details of the bug encountered.
 
-For more features, you can create a pull request, with details about your features
+For more features, you can create an issue, with details about your features
 
 
 ## TODO LIST:
@@ -121,7 +121,7 @@ For more features, you can create a pull request, with details about your featur
 [config.json]:https://github.com/gamingdy/Just-BOT/blob/main/config.json
 [dev portal]:https://discord.com/developers/applications
 [find token]:https://docs.discordbotstudio.org/setting-up-dbs/finding-your-bot-token
-[venv info]:https://realpython.com/python-virtual-environments-a-primer/
+[venv info]:https://docs.python.org/3/library/venv.html
 
 [contributors]: https://img.shields.io/github/contributors/gamingdy/Just-BOT?color=E91E63&style=for-the-badge
 [contributors-url]:https://github.com/gamingdy/Just-BOT/graphs/contributors
