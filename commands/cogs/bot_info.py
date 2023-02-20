@@ -1,4 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+import time
+import json
 
 from discord.commands import slash_command, option
 from discord.ext import commands
@@ -110,6 +112,14 @@ class BotInfo(commands.Cog):
             value="{}#{}".format(bot_owner.name, bot_owner.discriminator),
             inline=False,
         )
+        with open("data/info.json") as info:
+            data = json.load(info)
+            boot_time = timedelta(seconds=data["boot"])
+
+        actual_time = timedelta(seconds=time.time())
+        uptime = (str(actual_time - boot_time)).split(".")[0]
+
+        message_embed.add_field(name="Uptime", value=uptime)
 
         await ctx.respond(embed=message_embed)
 

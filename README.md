@@ -109,7 +109,6 @@ For more features, you can create an issue, with details about your features
     - funfact : give obvious or unbelievable information
 
 * ### Update:
-    - bot_info : add bot uptime
     - ui: Show information about user in image
     - list channel : Allows you to obtain the list of slowmodes for a specific channel
     - automatic update of the user name#discriminator in the DB if the user name changes
