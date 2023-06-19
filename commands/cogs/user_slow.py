@@ -52,6 +52,9 @@ class ManageSlowmode(commands.Cog):
     async def enable(
         self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
     ):
+        if slowmode_delay<=0:
+            await ctx.respond("Slowmode delay must be greater than 0")
+            return
         if isinstance(target, discord.Role):
             target_list = target.members
         else:
