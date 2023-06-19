@@ -99,17 +99,18 @@ def load_cog(path, bot):
     for content in os.listdir(path):
         if os.path.isdir(f"{path}/{content}"):
             load_cog(f"{path}/{content}", bot)
-        else:
-            if content.endswith(".py"):
-                cog_path = f"{path}/{content}"[:-3].replace("/", ".")
-                bot.load_extension(cog_path)
-                print(f"Loaded extension: {path}/{content}")
-                folder, file_name = cog_path.split(".")[1:]
-                with open("data/extension.json", "r+") as file:
-                    data = json.load(file)
-                    data[f"{file_name} [{folder}]"] = cog_path
-                    file.seek(0)
-                    json.dump(data, file, indent=4)
+            return
+
+        if content.endswith(".py"):
+            package_name = f"{path}/{content}"[:-3].replace("/", ".")
+            bot.load_extension(package_name)
+            print(f"Loaded extension: {path}/{content}")
+            folder, file_name = package_name.split(".")[1:]
+            with open("data/extension.json", "r+") as file:
+                data = json.load(file)
+                data[f"{file_name} [{folder}]"] = package_name
+                file.seek(0)
+                json.dump(data, file, indent=4)
 
 
 async def user_slowmode(channel, user, delay):
