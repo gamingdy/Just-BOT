@@ -77,14 +77,12 @@ class ManageSlowmode(commands.Cog):
                     )
                 else:
                     database.cursor().execute(
-                        "INSERT INTO slowmode_info (channel_id,user_id,delay, channel_name,user_name_discriminator) "
-                        "VALUES (?,?,?,?,?)",
+                        "INSERT INTO slowmode_info (channel_id,user_id,delay) "
+                        "VALUES (?,?,?)",
                         (
                             channel.id,
                             user.id,
                             slowmode_delay,
-                            channel.name,
-                            user_info,
                         ),
                     )
             else:
@@ -131,8 +129,7 @@ class ManageSlowmode(commands.Cog):
         element = (
             database.cursor()
             .execute(
-                "SELECT delay,user_name_discriminator,channel_name FROM slowmode_info WHERE channel_id = (?) ORDER BY "
-                "delay DESC",
+                "SELECT delay,user_id,channel_id FROM slowmode_info WHERE channel_id = (?) ORDER BY delay DESC",
                 (channel.id,),
             )
             .fetchall()

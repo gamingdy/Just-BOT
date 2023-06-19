@@ -26,15 +26,13 @@ def verify_db():
     print("Checking database tables")
     sql_request = {
         "slowmode_info": [
-            "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info",
+            "SELECT channel_id,user_id,delay,last_slowmode FROM slowmode_info",
             "DROP TABLE slowmode_info",
             """CREATE TABLE "slowmode_info" (
-                "channel_id"    INTEGER,
-                "user_id"   INTEGER,
-                "delay" INTEGER,
-                "last_slowmode" INTEGER,
-                "channel_name"  TEXT,
-                "user_name_discriminator"   TEXT
+                "channel_id"	INTEGER,
+                "user_id"	INTEGER,
+                "delay"	INTEGER,
+                "last_slowmode"	INTEGER
             );
             """,
         ],
