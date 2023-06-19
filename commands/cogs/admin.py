@@ -8,6 +8,7 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.extensions_list = False
+        self.extensions = []
 
     the_admin = SlashCommandGroup("admin", "Only bot admin can use this group")
 

@@ -7,7 +7,7 @@ import json
 import discord
 
 from config import database
-from .custom_error import NotGuildOwner
+from Utils.custom_error import NotGuildOwner
 
 
 def create_embed(title, description=None, color=None, image=None, thumbnail=None):
@@ -43,7 +43,7 @@ def verify_db():
             "DROP TABLE auto_voice",
             """CREATE TABLE "auto_voice" (
                 "guild_id"  INTEGER,
-                "channel_id"    INTEGER,
+                "channel_id"    INTEGER
             );
             """,
         ],

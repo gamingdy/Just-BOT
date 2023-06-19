@@ -37,7 +37,7 @@ Tools:
                 member: Guild Member
 
 Voice:
-    description: Voice command
+    description: List of voice command, you must do `/voice <command_name>` to use them.
     commands:
         config:
             description: Configure auto voice channel on current guild
