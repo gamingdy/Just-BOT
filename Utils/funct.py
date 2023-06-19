@@ -14,7 +14,7 @@ def create_embed(title, description=None, color=None, image=None, thumbnail=None
     embed = discord.Embed()
     embed.title = title
     embed.description = description
-    embed.colour = discord.Colour.random() if not color else color
+    embed.colour = color or discord.Colour.random()
     if image:
         embed.set_image(url=image)
     if thumbnail:

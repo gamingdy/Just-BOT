@@ -7,7 +7,7 @@ from discord.ext import commands
 from yaml import safe_load
 
 import Utils.funct as fonction
-from Utils.create_page import generate_page, PageNavigation
+from Utils.create_page import PageNavigation
 
 
 class BotInfo(commands.Cog):
@@ -46,7 +46,7 @@ class BotInfo(commands.Cog):
             if command_group in self.commands_help:
                 category = self.commands_help[command_group]
                 category_commands = category["commands"]
-                element = []
+                all_pages = []
                 for command in category_commands:
                     warn = ""
                     if "warn" in category_commands[command]:
@@ -64,17 +64,14 @@ class BotInfo(commands.Cog):
 
                     description = category_commands[command]["description"]
                     page = (f"{warn}\n{description}\n\n{arguments}", command)
-                    element.append(page)
+                    all_pages.append(page)
 
-                all_page = [element[i : i + 5] for i in range(0, len(element), 5)]
-                generate_page(help_embed, *iter(all_page[0]))
-                help_embed.set_footer(text=f"Page 1/{len(all_page)}")
 
                 help_embed.title = command_group.capitalize()
                 help_embed.description = category["description"]
 
                 my_navigation = PageNavigation(
-                    len(all_page), all_page, help_embed, ctx.author
+                    all_pages, help_embed, ctx.author
                 )
                 await ctx.respond(embed=help_embed, view=my_navigation)
                 return

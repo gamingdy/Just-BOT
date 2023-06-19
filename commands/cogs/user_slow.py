@@ -4,8 +4,9 @@ import typing
 import discord
 from discord.commands import SlashCommandGroup
 from discord.ext import commands
+from discord.utils import escape_markdown
 
-from Utils.create_page import generate_page, PageNavigation
+from Utils.create_page import PageNavigation
 from Utils.funct import create_embed
 from config import database
 
@@ -67,9 +68,7 @@ class ManageSlowmode(commands.Cog):
             .fetchall()
         ]
         for user in target_list:
-
             if user.id != self.bot.user.id:
-                user_info = "{}#{}".format(user.name, user.discriminator)
                 if user.id in channel_slowmode:
                     database.cursor().execute(
                         "UPDATE slowmode_info SET delay=(?) WHERE channel_id=(?) AND user_id=(?)",
@@ -136,21 +135,23 @@ class ManageSlowmode(commands.Cog):
         )
         my_embed = create_embed("Slowmode list")
         if element:
-            my_embed.description = f"*List of active slowmode in #{element[0][2]}*"
-            all_page = [element[i : i + 5] for i in range(0, len(element), 5)]
+            channel_name = self.bot.get_channel(element[0][2])
+            if channel_name is None:
+                my_embed.description = "Deleted channel"
+                await ctx.respond(embed=my_embed)
+                return
 
-            all_page = list(
-                map(
-                    lambda l: list(map(lambda i: (f"Delay: {i[0]}", i[1]), l)),
-                    all_page,
-                )
-            )
+            my_embed.description = f"*List of active slowmode in #{channel_name.name}*"
+            all_pages = []
+            for slowmode_info in element:
+                user = await self.bot.get_or_fetch_user(slowmode_info[1])
+                if user is None:
+                    continue
 
-            generate_page(my_embed, *iter(all_page[0]))
-            my_embed.set_footer(text=f"Page 1/{len(all_page)}")
+                all_pages.append((f"Delay: {slowmode_info[0]}", escape_markdown(user.name)))
 
             my_navigation = PageNavigation(
-                len(all_page), all_page, my_embed, ctx.author
+                all_pages, my_embed, ctx.author
             )
             await ctx.respond(embed=my_embed, view=my_navigation)
         else:

@@ -9,3 +9,5 @@ with open("config.json") as conf:
 
 with open("data/extension.json", "w") as ext_list:
     json.dump({}, ext_list, indent=4)
+
+ELEMENTS_PER_PAGE = 5
