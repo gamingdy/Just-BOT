@@ -126,8 +126,8 @@ class ManageSlowmode(commands.Cog):
 
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
-    async def list(self, ctx):
-        channel = ctx.channel
+    async def list(self, ctx, channel: discord.TextChannel = None):
+        channel = channel or ctx.channel 
         element = (
             database.cursor()
             .execute(

@@ -15,6 +15,8 @@ Slowmode:
         list:
             description: List the users in slowmode, in the active channel.
             warn: This command requires the manage_message permission
+            args:
+                channel: Guild channel
 
 Info:
     description: All information about bot
