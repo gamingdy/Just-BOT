@@ -36,6 +36,13 @@ Before launching the bot for the first time, you must edit the file [config.json
     }
     ```
 
+- **debug_channel** -->  A channel for the bot to send any unexpected errors as they occur. The id must be a valid text channel visible to the bot
+    ```json
+    {
+        "debug_channel": 0123456789012345678
+    }
+    ```
+
 **🚨 Warning 🚨** : Before launching the bot, you must reinvite it by activating the `applications.commands`, like that.
 ![invite img]
 
