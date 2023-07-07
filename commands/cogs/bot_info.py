@@ -106,7 +106,7 @@ class BotInfo(commands.Cog):
         bot_owner = bot_info.owner
         message_embed.add_field(
             name="Bot owner",
-            value="{}#{}".format(bot_owner.name, bot_owner.discriminator),
+            value=bot_owner.name,
             inline=False,
         )
         with open("data/info.json") as info:
