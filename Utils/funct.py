@@ -99,7 +99,7 @@ def load_cog(path, bot):
     for content in os.listdir(path):
         if os.path.isdir(f"{path}/{content}"):
             load_cog(f"{path}/{content}", bot)
-            return
+            continue
 
         if content.endswith(".py"):
             package_name = f"{path}/{content}"[:-3].replace("/", ".")
