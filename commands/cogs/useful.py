@@ -36,11 +36,7 @@ class BotTools(commands.Cog):
         since_created = f"<t:{create_date}:R>"
 
         activity = user.activity
-
         if activity:
-            print(type(activity))
-            print(type(activity.type))
-            print(activity.type)
             activity_name = activity.name
             if isinstance(activity, discord.activity.CustomActivity):
                 activity = activity_name

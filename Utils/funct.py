@@ -29,10 +29,10 @@ def verify_db():
             "SELECT channel_id,user_id,delay,last_slowmode FROM slowmode_info",
             "DROP TABLE slowmode_info",
             """CREATE TABLE "slowmode_info" (
-                "channel_id"	INTEGER,
-                "user_id"	INTEGER,
-                "delay"	INTEGER,
-                "last_slowmode"	INTEGER
+                "channel_id"    INTEGER,
+                "user_id"   INTEGER,
+                "delay" INTEGER,
+                "last_slowmode" INTEGER
             );
             """,
         ],

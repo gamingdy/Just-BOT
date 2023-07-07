@@ -51,25 +51,25 @@ Voice:
             warn: Only guild owner can use this command
         name:
             description: Change name of current voice channel
-            warn: You must be connected in voice channel and be admin
+            warn: You must be connected in voice channel and be channel admin
             args:
                 name: Channel name
                 
         public:
             description: Set current channel as public channel
-            warn: You must be connected in voice channel and be admin
+            warn: You must be connected in voice channel and be channel admin
         private:
             description: Set current channel as public channel
-            warn: You must be connected in voice channel and be admin
+            warn: You must be connected in voice channel and be channel admin
 
         block add:
             description: Add user to voice channel block list
-            warn: You must be connected in voice channel and be admin
+            warn: You must be connected in voice channel and be channel admin
             args:
                 user: Guild member
         white add:
             description: Add user to voice channel whitelist
-            warn: You must be connected in voice channel and be admin
+            warn: You must be connected in voice channel and be channel admin
             args:
                 user: Guild member
 

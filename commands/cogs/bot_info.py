@@ -66,13 +66,10 @@ class BotInfo(commands.Cog):
                     page = (f"{warn}\n{description}\n\n{arguments}", command)
                     all_pages.append(page)
 
-
                 help_embed.title = command_group.capitalize()
                 help_embed.description = category["description"]
 
-                my_navigation = PageNavigation(
-                    all_pages, help_embed, ctx.author
-                )
+                my_navigation = PageNavigation(all_pages, help_embed, ctx.author)
                 await ctx.respond(embed=help_embed, view=my_navigation)
                 return
 
