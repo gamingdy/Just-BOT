@@ -1,0 +1,92 @@
+Slowmode:
+    description: List of commands to manage the slowmode, you must do `/slowmode <command_name>` to use them.
+    commands:
+        enable:
+            description: Enable slowmode for a user or a role with a delay in sec, in the active channel.
+            warn: This command requires the manage_message permission
+            args:
+                target: Guild member or role
+                slowmode_delay: Slowmode duration in seconds
+        disable:
+            description: Disable slowmode for a user or role, in the active channel.
+            warn: This command requires the manage_message permission
+            args:
+                target: Guild member or role
+        list:
+            description: List the users in slowmode, in the active channel.
+            warn: This command requires the manage_message permission
+            args:
+                channel: Guild channel
+
+Info:
+    description: All information about bot
+    commands:
+        ping:
+            description: Display bot's ping.
+        help:
+            description: Display bot's help.
+            args:
+                command_group: The name of a group of commands
+        info:
+            description: Displays bot's info
+
+Tools:
+    description: Available tools
+    commands:
+        ui:
+            description: Display information about a user or the command author
+            args:
+                member: Guild Member
+
+Voice:
+    description: List of voice command, you must do `/voice <command_name>` to use them.
+    commands:
+        config:
+            description: Configure auto voice channel on current guild
+            warn: Only guild owner can use this command
+            args:
+                channel: Guild channel 
+        disable:
+            description : Disable auto voice channel on current guild
+            warn: Only guild owner can use this command
+        name:
+            description: Change name of current voice channel
+            warn: You must be connected in voice channel and be channel admin
+            args:
+                name: Channel name
+                
+        public:
+            description: Set current channel as public channel
+            warn: You must be connected in voice channel and be channel admin
+        private:
+            description: Set current channel as public channel
+            warn: You must be connected in voice channel and be channel admin
+
+        block add:
+            description: Add user to voice channel block list
+            warn: You must be connected in voice channel and be channel admin
+            args:
+                user: Guild member
+        white add:
+            description: Add user to voice channel whitelist
+            warn: You must be connected in voice channel and be channel admin
+            args:
+                user: Guild member
+
+        block remove:
+            description: Remove user from channel blocklist
+            warn: You must be connected in voice channel and be admin
+            args:
+                user: Guild member
+        white remove:
+            description: Remove user from channel whitelist
+            warn: You must be connected in voice channel and be admin
+            args:
+                user: Guild member
+        
+        block list:
+            description: Show current channel blocklist
+        white list:
+            description: Show current channel blocklist
+
+

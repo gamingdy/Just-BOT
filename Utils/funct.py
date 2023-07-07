@@ -1,22 +1,20 @@
-import sqlite3
-import os
-import discord
-from random import randint
-import time
 import asyncio
+import os
+import sqlite3
+import time
+import json
+
+import discord
 
 from config import database
+from Utils.custom_error import NotGuildOwner
 
 
 def create_embed(title, description=None, color=None, image=None, thumbnail=None):
     embed = discord.Embed()
     embed.title = title
     embed.description = description
-    embed.colour = (
-        discord.Colour.from_rgb(randint(0, 255), randint(0, 255), randint(0, 255))
-        if not color
-        else color
-    )
+    embed.colour = color or discord.Colour.random()
     if image:
         embed.set_image(url=image)
     if thumbnail:
@@ -25,20 +23,59 @@ def create_embed(title, description=None, color=None, image=None, thumbnail=None
 
 
 def verify_db():
+    print("Checking database tables")
     sql_request = {
         "slowmode_info": [
-            "SELECT channel_id,user_id,delay,last_slowmode,channel_name,user_name_discriminator FROM slowmode_info",
+            "SELECT channel_id,user_id,delay,last_slowmode FROM slowmode_info",
             "DROP TABLE slowmode_info",
             """CREATE TABLE "slowmode_info" (
                 "channel_id"    INTEGER,
                 "user_id"   INTEGER,
                 "delay" INTEGER,
-                "last_slowmode" INTEGER,
-                "channel_name"  TEXT,
-                "user_name_discriminator"   TEXT
+                "last_slowmode" INTEGER
             );
             """,
-        ]
+        ],
+        "auto_voice": [
+            "SELECT guild_id,channel_id FROM auto_voice",
+            "DROP TABLE auto_voice",
+            """CREATE TABLE "auto_voice" (
+                "guild_id"  INTEGER,
+                "channel_id"    INTEGER
+            );
+            """,
+        ],
+        "active_voice": [
+            "SELECT author_id,channel_id,open FROM active_voice",
+            "DROP TABLE active_voice",
+            """
+            CREATE TABLE "active_voice" (
+                "author_id" INTEGER,
+                "channel_id"    INTEGER,
+                "open" BOOLEAN
+            );
+            """,
+        ],
+        "blocklist": [
+            "SELECT channel_id,user_id FROM blocklist",
+            "DROP TABLE blocklist",
+            """
+            CREATE TABLE "blocklist" (
+                "channel_id"    INTEGER,
+                "user_id"   INTEGER
+            );
+            """,
+        ],
+        "whitelist": [
+            "SELECT channel_id,user_id FROM whitelist",
+            "DROP TABLE whitelist",
+            """
+            CREATE TABLE "whitelist" (
+                "channel_id"    INTEGER,
+                "user_id"   INTEGER
+            );
+            """,
+        ],
     }
     curs = database.cursor()
     for table in sql_request:
@@ -46,11 +83,11 @@ def verify_db():
             curs.execute(sql_request[table][0])
         except sqlite3.OperationalError:
             print("Database error")
-            print("Try to create table in database")
+            print(f"Try to create {table} table in database")
             try:
                 curs.execute(sql_request[table][2])
             except sqlite3.OperationalError:
-                print("Table already exists, but an error occurred")
+                print(f"{table} already exists, but an error occurred")
                 print("Try to recreate table")
 
                 curs.execute(sql_request[table][1])
@@ -62,9 +99,18 @@ def load_cog(path, bot):
     for content in os.listdir(path):
         if os.path.isdir(f"{path}/{content}"):
             load_cog(f"{path}/{content}", bot)
-        else:
-            if content.endswith(".py"):
-                bot.load_extension(f"{path}/{content}"[:-3].replace("/", "."))
+            continue
+
+        if content.endswith(".py"):
+            package_name = f"{path}/{content}"[:-3].replace("/", ".")
+            bot.load_extension(package_name)
+            print(f"Loaded extension: {path}/{content}")
+            folder, file_name = package_name.split(".")[1:]
+            with open("data/extension.json", "r+") as file:
+                data = json.load(file)
+                data[f"{file_name} [{folder}]"] = package_name
+                file.seek(0)
+                json.dump(data, file, indent=4)
 
 
 async def user_slowmode(channel, user, delay):
@@ -101,6 +147,12 @@ def get_traceback_info(traceback_error):
     traceback_error = traceback_error[:end_of_traceback]
     file_name = traceback_error[-2].split(",")[0].replace("\\", "/").split("/")[-1][:-1]
     line = traceback_error[-2].split(",")[1]
-    bad_code = "".join(traceback_error[-2].split(",")[2:])
+    command, code = "".join(traceback_error[-2].split(",")[2:])[:-1].split("\n")
 
-    return file_name, line, bad_code
+    return file_name, line, command, code.lstrip()
+
+
+async def guild_owner(ctx):
+    if ctx.guild.owner_id == ctx.author.id:
+        return True
+    raise NotGuildOwner("You are not guild owner")

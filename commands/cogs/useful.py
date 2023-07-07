@@ -1,6 +1,6 @@
 import discord
-from discord.ext import commands
 from discord.commands import slash_command
+from discord.ext import commands
 
 import Utils.funct as fonction
 
@@ -40,12 +40,15 @@ class BotTools(commands.Cog):
             activity_name = activity.name
             if isinstance(activity, discord.activity.CustomActivity):
                 activity = activity_name
-            elif isinstance(activity, discord.activity.Game):
+
+            elif activity.type == discord.ActivityType.playing:
                 activity = f"Playing {activity_name}"
-            elif isinstance(activity, discord.activity.Streaming):
+
+            elif activity.type == discord.ActivityType.streaming:
                 activity = f"Streaming {activity_name} on {activity.platform}, [stream url]({activity.url})"
-            elif isinstance(activity, discord.activity.Spotify):
+            elif activity.type == discord.ActivityType.listening:
                 activity = f"Listening {activity.title}({activity.duration}), [track url]({activity.track_url})"
+
         else:
             activity = "Nothing"
 

@@ -1,16 +1,20 @@
-from discord.ext import commands
-from discord.commands import slash_command, option
-from datetime import datetime
+from datetime import datetime, timedelta
+import time
 import json
 
+from discord.commands import slash_command, option
+from discord.ext import commands
+from yaml import safe_load
+
 import Utils.funct as fonction
+from Utils.create_page import PageNavigation
 
 
 class BotInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        with open("data/help.json", encoding="utf8") as help_file:
-            self.commands_help = json.load(help_file)
+        with open("data/help.yml", encoding="utf8") as help_file:
+            self.commands_help = safe_load(help_file)
 
     async def get_command_group(self, ctx):
         return [
@@ -25,13 +29,12 @@ class BotInfo(commands.Cog):
         latency = self.bot.latency * 1000
         await ctx.send("Pong", delete_after=0.1)
 
-        latency_ms = f"**{str(round(latency,0))[:-2]}** ms"
+        latency_ms = f"**{str(round(latency, 0))[:-2]}** ms"
         ping_end = (datetime.now() - ping_start).microseconds / 1000
         bot_ping = f"**{round(ping_end)}** ms"
 
         ping_emb = fonction.create_embed(title="Bot latency")
-        ping_emb.add_field(name=":satellite: API",
-                           value=latency_ms, inline=True)
+        ping_emb.add_field(name=":satellite: API", value=latency_ms, inline=True)
         ping_emb.add_field(name=":robot: BOT", value=bot_ping)
         await ctx.respond(embed=ping_emb)
 
@@ -42,25 +45,49 @@ class BotInfo(commands.Cog):
         if command_group:
             if command_group in self.commands_help:
                 category = self.commands_help[command_group]
-                category_command = category[1]
+                category_commands = category["commands"]
+                all_pages = []
+                for command in category_commands:
+                    warn = ""
+                    if "warn" in category_commands[command]:
+                        warn = f"**:warning: {category_commands[command]['warn']} :warning:**"
 
-                help_embed.title = "{}'s help".format(
-                    command_group.capitalize())
-                help_embed.description = category[0]
+                    arguments = "__This command does not take any argument__"
+                    if "args" in category_commands[command]:
+                        arguments = "__Arguments__:\n"
+                        all_args = []
+                        for args in category_commands[command]["args"]:
+                            all_args.append(
+                                f"`{args}` ({category_commands[command]['args'][args]})"
+                            )
+                        arguments += ", ".join(all_args)
 
-                for command in category_command:
-                    help_embed.add_field(
-                        name=command, value=category_command[command], inline=False
-                    )
+                    description = category_commands[command]["description"]
+                    page = (f"{warn}\n{description}\n\n{arguments}", command)
+                    all_pages.append(page)
+
+                help_embed.title = command_group.capitalize()
+                help_embed.description = category["description"]
+
+                my_navigation = PageNavigation(all_pages, help_embed, ctx.author)
+                await ctx.respond(embed=help_embed, view=my_navigation)
+                return
+
             else:
-                help_embed.description = f":warning:**The category `{command_group.capitalize()}` is not found**\n\n You can do `/help` to see all available categories"
+                help_embed.description = (
+                    f":warning:**The category `{command_group.capitalize()}` is not found**\n\n "
+                    f"You can do `/help` to see all available categories "
+                )
         else:
             help_embed.description = (
                 "You can do `/help <category>` to get help about a category"
             )
+
             for group in self.commands_help:
                 help_embed.add_field(
-                    name=group, value=self.commands_help[group][0], inline=False
+                    name=group,
+                    value=self.commands_help[group]["description"],
+                    inline=False,
                 )
 
         await ctx.respond(embed=help_embed)
@@ -69,18 +96,24 @@ class BotInfo(commands.Cog):
     async def info(self, ctx):
         message_embed = fonction.create_embed(title="Bot's info")
 
-        message_embed.add_field(name="Total Guilds",
-                                value=len(self.bot.guilds))
-        message_embed.add_field(name="Total Members",
-                                value=len(self.bot.users))
+        message_embed.add_field(name="Total Guilds", value=len(self.bot.guilds))
+        message_embed.add_field(name="Total Members", value=len(self.bot.users))
 
         bot_info = await self.bot.application_info()
         bot_owner = bot_info.owner
         message_embed.add_field(
             name="Bot owner",
-            value="{}#{}".format(bot_owner.name, bot_owner.discriminator),
+            value=bot_owner.name,
             inline=False,
         )
+        with open("data/info.json") as info:
+            data = json.load(info)
+            boot_time = timedelta(seconds=data["boot"])
+
+        actual_time = timedelta(seconds=time.time())
+        uptime = (str(actual_time - boot_time)).split(".")[0]
+
+        message_embed.add_field(name="Uptime", value=uptime)
 
         await ctx.respond(embed=message_embed)
 

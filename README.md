@@ -1,42 +1,58 @@
 # Just-BOT
 
-[invite img]:img/invite_option.png
+[![contributors]][contributors-url]
+[![issues]][issues-url]
+![stars]
+[![forks]][forks-url]
+[![license]][license-url]
 
-Good evening, welcome on the README of Just-BOT
+Good evening, welcome on the main page of Just-BOT
 
-Just-BOT is a Discord bot allowing to realize only one thing ( for the moment ), which is the possibility to put in slowmode one or several users/roles.   
+
+Just-BOT is a Discord bot with a lot of feature
 
 
 ## Summary
 
-- [Configuration](https://github.com/gamingdy/Just-BOT#configuration)
-- [Installation](https://github.com/gamingdy/Just-BOT#installation)
-- [Bugs and Feature](https://github.com/gamingdy/Just-BOT#bugsfeatures)
+- [Configuration](#configuration)
+- [Installation](#installation)
+- [Run](#run)
+- [Bugs and Feature](#bugsfeatures)
+- [TODO LIST](#todo-list)
+
 
 ## Configuration
 
-Before launching the bot for the first time, you must edit the file [config.json](https://github.com/gamingdy/Just-BOT/blob/main/config.json)
+Before launching the bot for the first time, you must edit the file [config.json]
 
-- `TOKEN`  --> The bot token available on [the developer portal](https://discord.com/developers/applications), and if you don't know how to find the token of your bot, [here is a tuto that explains it](https://docs.discordbotstudio.org/setting-up-dbs/finding-your-bot-token)
+- **TOKEN**  --> The bot token available on [the developer portal][dev portal], and if you don't know how to find the token of your bot, [here is a tuto that explains it][find token]
 
-- `database` --> The path to a file to store your database, **if the file does not exist, it is automatically created by python**, by default it's `data/bot.db`
+- **database** --> The path to a file to store your SQLITE database, **if the file does not exist, it is automatically created by python**, by default it's `data/bot.db`
 
-- `debug` --> If you want to launch your bot by activating the `debug_guild` here is an example,otherwise you can leave the default config:
+- **debug** --> If you want to launch your bot by activating the `debug_guild` here is an example,otherwise you can leave the default config:
     ```json
     {
         "debug": [true, ["List of guild ids"]]
     }
     ```
 
+- **debug_channel** -->  A channel for the bot to send any unexpected errors as they occur. The id must be a valid text channel visible to the bot
+    ```json
+    {
+        "debug_channel": 0123456789012345678
+    }
+    ```
+
 **🚨 Warning 🚨** : Before launching the bot, you must reinvite it by activating the `applications.commands`, like that.
 ![invite img]
 
+
 ## Installation
 
- - you can install the necessary packages by doing :
+ - You can install the necessary packages by following these steps :
 
 **Linux/Mac** 
-```
+```bash
 $ python3 -m venv /path/to/new/virtual/environment
 
 $ source /path/to/new/virtual/environment/bin/activate
@@ -57,10 +73,71 @@ C:\> pip -r requirements.txt
 **If `pip -r requirements.txt` don't work , you can try**:
 ```
 $ python -m pip -r requirements.txt
+C:\> python -m pip -r requirements.txt
 ```
+**Note** : You can get more information about venv by following this [link][venv info]
+
+
+## RUN
+
+- You can launch the program by running the file `main.py`
+
+**Linux/Mac** 
+```bash
+$ source /path/to/new/virtual/environment/bin/activate
+$ python main.py
+```
+
+**Windows**
+```
+    
+C:\> \path\to\new\virtual\environment\Scripts\activate.bat
+    
+C:\> python main.py
+```
+
 
 ## Bugs/Features
 
 If you encounter a bug, you can create an issue, with details of the bug encountered.
 
-For more features, you can create a pull request, with details about your features
+For more features, you can create an issue, with details about your features
+
+
+## TODO LIST:
+
+* ### Presentation:
+    - discord : create discord server for bot and me
+    - hosted version : Provide a hosted version of the bot
+
+* ### Command:
+    - todo : Allows the owner to create a callback for features or bug fixes
+    - serverstats : Get information about the server
+    - funfact : give obvious or unbelievable information
+
+* ### Update:
+    - ui: Show information about user in image
+    - automatic addition of a user in slowmode, if the slowmode of the role is activated
+
+
+<!-- Markdown link -->
+[invite img]:doc/img/invite_option.png
+[config.json]:https://github.com/gamingdy/Just-BOT/blob/main/config.json
+[dev portal]:https://discord.com/developers/applications
+[find token]:https://docs.discordbotstudio.org/setting-up-dbs/finding-your-bot-token
+[venv info]:https://docs.python.org/3/library/venv.html
+
+[contributors]: https://img.shields.io/github/contributors/gamingdy/Just-BOT?color=E91E63&style=for-the-badge
+[contributors-url]:https://github.com/gamingdy/Just-BOT/graphs/contributors
+
+[stars]: https://img.shields.io/github/stars/gamingdy/Just-BOT?color=E91E63&style=for-the-badge
+
+[issues]:https://img.shields.io/github/issues/gamingdy/Just-BOT?color=E91E63&style=for-the-badge
+[issues-url]:https://github.com/gamingdy/Just-BOT/issues
+
+[forks]:https://img.shields.io/github/forks/gamingdy/Just-BOT?color=E91E63&style=for-the-badge
+[forks-url]:https://github.com/gamingdy/Just-BOT/network/members
+
+[license]:https://img.shields.io/github/license/gamingdy/Just-BOT?color=E91E63&style=for-the-badge
+[license-url]:LICENCE
+
