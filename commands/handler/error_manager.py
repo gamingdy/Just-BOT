@@ -9,6 +9,7 @@ from Utils.custom_error import (
     NotConnectedInVoiceChannel,
     NotVoiceChannelAdmin,
 )
+from config import debug_channel
 
 
 class ErrorHandler(commands.Cog):
@@ -42,7 +43,6 @@ class ErrorHandler(commands.Cog):
             await ctx.respond(embed=embed_message, ephemeral=True)
 
         else:
-
             embed_message.description = "Oh, it seems that an unknown error occurred, no worries, a very explicit message has been sent to the dev to solve the problem👌."
             await ctx.respond(embed=embed_message, ephemeral=True)
 
@@ -63,8 +63,13 @@ class ErrorHandler(commands.Cog):
                 name="🗒️ Traceback",
                 value=f"**File** : `{file_name}` {line}\n**Code** : {command}\n```py\n{code}```",
             )
-            # await bot_info.owner.send(embed=embed_message)
-            await ctx.respond(embed=embed_message)
+            debug_channel_ = self.bot.get_channel(debug_channel)
+            if debug_channel_ and isinstance(debug_channel_, discord.TextChannel):
+                await debug_channel_.send(embed=embed_message)
+                return
+
+            message = "It seems that the debug channel id has been misconfigured, but here's the error message anyway"
+            await bot_info.owner.send(content=message, embed=embed_message)
 
 
 def setup(bot):
