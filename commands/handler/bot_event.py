@@ -1,9 +1,7 @@
-import traceback
-
 import discord
 from discord.ext import commands
 
-from Utils.funct import user_slowmode, create_embed, get_traceback_info
+from Utils.funct import user_slowmode, lowest_delay
 from config import database
 
 
@@ -25,8 +23,11 @@ class EventHandler(commands.Cog):
                 tuple(ids)
             )
         )
-        if db_row:
-            await user_slowmode(channel, author, db_row[0][2])
+        all_delay = database.cursor().execute(sql_request, (channel.id,)).fetchall()
+
+        if all_delay:
+            lowest_ = lowest_delay(all_delay)
+            await user_slowmode(channel, author, lowest_)
 
 
 class VoiceHandler(commands.Cog):

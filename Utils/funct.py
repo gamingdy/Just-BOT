@@ -166,3 +166,7 @@ def get_active_slowmode(channel, role):
             if overwrite.get_role(role.id) is not None:
                 active_slowmodes.append(overwrite)
     return active_slowmodes
+
+
+def lowest_delay(all_delay):
+    return min([delay[0] for delay in all_delay])
