@@ -52,48 +52,38 @@ class ManageSlowmode(commands.Cog):
     async def enable(
         self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
     ):
-        if slowmode_delay<=0:
+        is_role = isinstance(target, discord.Role)
+        if not is_role and target.id == self.bot.user.id:
+            await ctx.respond("You can't slowmode bot")
+            return
+
+        if slowmode_delay <= 0:
             await ctx.respond("Slowmode delay must be greater than 0")
             return
-        if isinstance(target, discord.Role):
-            target_list = target.members
-        else:
-            target_list = [target]
+
         channel = ctx.channel
 
-        bot_status = await ctx.respond(
-            f"Activation of the slowmode for {len(target_list)} users..."
+        active_slowmode = (
+            database.cursor()
+            .execute(
+                "SELECT id FROM slowmode_info WHERE channel_id=(?) AND id=(?)",
+                (channel.id, target.id),
+            )
+            .fetchone()
         )
-        channel_slowmode = [
-            user_id[0]
-            for user_id in database.cursor()
-            .execute("SELECT user_id FROM slowmode_info")
-            .fetchall()
-        ]
-        for user in target_list:
-            if user.id != self.bot.user.id:
-                if user.id in channel_slowmode:
-                    database.cursor().execute(
-                        "UPDATE slowmode_info SET delay=(?) WHERE channel_id=(?) AND user_id=(?)",
-                        (slowmode_delay, channel.id, user.id),
-                    )
-                else:
-                    database.cursor().execute(
-                        "INSERT INTO slowmode_info (channel_id,user_id,delay) "
-                        "VALUES (?,?,?)",
-                        (
-                            channel.id,
-                            user.id,
-                            slowmode_delay,
-                        ),
-                    )
-            else:
-                target_list.remove(self.bot.user)
-                await ctx.send("You can't slowmode bot")
+
+        if active_slowmode:
+            database.cursor().execute(
+                "UPDATE slowmode_info SET delay=(?) WHERE channel_id=(?) AND id=(?)",
+                (slowmode_delay, channel.id, target.id),
+            )
+        else:
+            database.cursor().execute(
+                "INSERT INTO slowmode_info (channel_id,id,delay,is_role) VALUES (?,?,?,?)",
+                (channel.id, target.id, slowmode_delay, int(is_role)),
+            )
         database.commit()
-        await bot_status.edit_original_response(
-            content=f"Slowmode on for {len(target_list)} users"
-        )
+        await ctx.respond(content=f"Slowmode on for <@{target.id}>", ephemeral=True)
 
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
