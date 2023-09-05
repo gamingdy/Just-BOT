@@ -13,6 +13,8 @@ class EventHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, ctx):
+        if ctx.author.bot:
+            return
         author = ctx.author
         channel = ctx.channel
 
