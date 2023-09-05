@@ -119,11 +119,11 @@ class ManageSlowmode(commands.Cog):
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
     async def list(self, ctx, channel: discord.TextChannel = None):
-        channel = channel or ctx.channel 
+        channel = channel or ctx.channel
         element = (
             database.cursor()
             .execute(
-                "SELECT delay,user_id,channel_id FROM slowmode_info WHERE channel_id = (?) ORDER BY delay DESC",
+                "SELECT delay,id,channel_id,is_role FROM slowmode_info WHERE channel_id = (?) ORDER BY delay DESC",
                 (channel.id,),
             )
             .fetchall()
@@ -139,15 +139,24 @@ class ManageSlowmode(commands.Cog):
             my_embed.description = f"*List of active slowmode in #{channel_name.name}*"
             all_pages = []
             for slowmode_info in element:
-                user = await self.bot.get_or_fetch_user(slowmode_info[1])
-                if user is None:
+                user_role = (
+                    await self.bot.get_or_fetch_user(slowmode_info[1])
+                    if slowmode_info[3] == 0
+                    else ctx.guild.get_role(slowmode_info[1])
+                )
+                if user_role is None:
                     continue
 
-                all_pages.append((f"Delay: {slowmode_info[0]}", escape_markdown(user.name)))
+                all_pages.append(
+                    (
+                        f"Delay: {slowmode_info[0]}",
+                        f"{escape_markdown(user_role.name)} (member)"
+                        if slowmode_info[3] == 0
+                        else f"{escape_markdown(user_role.name)} (role)",
+                    )
+                )
 
-            my_navigation = PageNavigation(
-                all_pages, my_embed, ctx.author
-            )
+            my_navigation = PageNavigation(all_pages, my_embed, ctx.author)
             await ctx.respond(embed=my_embed, view=my_navigation)
         else:
             my_embed.description = "**No slowmode users in this channel**"
