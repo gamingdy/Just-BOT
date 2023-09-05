@@ -16,15 +16,14 @@ class EventHandler(commands.Cog):
         if ctx.author.bot:
             return
         author = ctx.author
-        channel = ctx.channel
+        author_roles = [role.id for role in author.roles]
 
-        db_row = (
-            database.cursor()
-            .execute(
-                "SELECT * FROM slowmode_info WHERE channel_id=(?) AND user_id=(?)",
-                (channel.id, author.id),
+        channel = ctx.channel
+        ids = [author.id] + author_roles
+        sql_request = (
+            "SELECT delay FROM slowmode_info WHERE channel_id=(?) AND id IN {}".format(
+                tuple(ids)
             )
-            .fetchall()
         )
         if db_row:
             await user_slowmode(channel, author, db_row[0][2])
