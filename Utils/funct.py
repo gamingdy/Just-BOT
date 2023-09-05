@@ -25,6 +25,18 @@ def create_embed(title, description=None, color=None, image=None, thumbnail=None
 def verify_db():
     print("Checking database tables")
     sql_request = {
+        "active_slowmode": [
+            "SELECT channel_id, user_id,delay,last_slowmode FROM active_slowmode",
+            "DROP TABLE active_slowmode",
+            """
+            CREATE TABLE "active_slowmode" (
+                "channel_id"INTEGER,
+                "user_id"   INTEGER,
+                "delay" INTEGER,
+                "last_slowmode" INTEGER
+            );
+            """,
+        ],
         "slowmode_info": [
             "SELECT channel_id,id,delay,is_role FROM slowmode_info",
             "DROP TABLE slowmode_info",
