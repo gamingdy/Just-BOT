@@ -100,20 +100,20 @@ class ManageSlowmode(commands.Cog):
         user_nb = 0
         prev = 0
         last_refresh = time.time()
+        database.cursor().execute(
+            "DELETE FROM slowmode_info WHERE channel_id=(?) AND id=(?)",
+            (channel.id, target.id),
+        )
         for user in target_list:
             await channel.set_permissions(user, overwrite=None)
 
-            database.cursor().execute(
-                "DELETE FROM slowmode_info WHERE channel_id=(?) AND user_id=(?)",
-                (channel.id, user.id),
-            )
             user_nb += 1
             prev, last_refresh = await self.loading_bar(
                 bot_status, user_nb / len(target_list), prev, last_refresh
             )
         database.commit()
         await bot_status.edit_original_response(
-            content=f"Slowmode off for {len(target_list)} users"
+            content=f"Slowmode off for <@{target.id}>", ephemeral=True
         )
 
     @slowmode_commands.command()
