@@ -156,3 +156,13 @@ async def guild_owner(ctx):
     if ctx.guild.owner_id == ctx.author.id:
         return True
     raise NotGuildOwner("You are not guild owner")
+
+
+def get_active_slowmode(channel, role):
+    active_slowmodes = []
+    overwrites = channel.overwrites
+    for overwrite in overwrites:
+        if isinstance(overwrite, discord.Member):
+            if overwrite.get_role(role.id) is not None:
+                active_slowmodes.append(overwrite)
+    return active_slowmodes

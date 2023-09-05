@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.utils import escape_markdown
 
 from Utils.create_page import PageNavigation
-from Utils.funct import create_embed
+from Utils.funct import create_embed, get_active_slowmode
 from config import database
 
 
@@ -88,9 +88,11 @@ class ManageSlowmode(commands.Cog):
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
     async def disable(self, ctx, target: typing.Union[discord.User, discord.Role]):
-        target_list = target.members if isinstance(target, discord.Role) else [target]
-
+        is_role = isinstance(target, discord.Role)
         channel = ctx.channel
+
+        target_list = get_active_slowmode(channel, target) if is_role else [target]
+
         bot_status = await ctx.respond(
             f"Disable slowmode for {len(target_list)} users..."
         )
