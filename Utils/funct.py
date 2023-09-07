@@ -144,19 +144,20 @@ async def user_slowmode(channel, user, delay):
 
 
 async def verify_user_slowmode(bot):
-    my_database = database.cursor().execute("SELECT * FROM slowmode_info").fetchall()
+    my_database = database.cursor().execute("SELECT * FROM active_slowmode").fetchall()
     if my_database:
         for row in my_database:
-            if row[3]:
-                channel = bot.get_channel(row[0])
-                user = bot.get_user(row[1])
-                slowmode_delay = row[2]
-                last_slowmode = row[3]
-                actual_time = round(time.time())
-                if actual_time - slowmode_delay > last_slowmode:
-                    await user_slowmode(channel, user, 0)
-                else:
-                    await user_slowmode(channel, user, actual_time - slowmode_delay)
+            channel = bot.get_channel(row[0])
+            user = bot.get_user(row[1])
+            slowmode_delay = row[2]
+            last_slowmode = row[3]
+            actual_time = round(time.time())
+            elapsed_time = actual_time - slowmode_delay
+            if elapsed_time > last_slowmode:
+                await user_slowmode(channel, user, 0)
+            else:
+                await user_slowmode(channel, user, elapsed_time)
+
 
 def is_slowmode(channel, user):
     in_slowmode = (
