@@ -151,6 +151,20 @@ async def verify_user_slowmode(bot):
                 else:
                     await user_slowmode(channel, user, actual_time - slowmode_delay)
 
+def is_slowmode(channel, user):
+    in_slowmode = (
+        database.cursor()
+        .execute(
+            "SELECT * FROM active_slowmode WHERE channel_id=(?) AND user_id=(?)",
+            (channel.id, user.id),
+        )
+        .fetchone()
+    )
+
+    if in_slowmode:
+        return True
+    return False
+
 
 def get_traceback_info(traceback_error):
     end_of_traceback = traceback_error.index(
