@@ -83,7 +83,7 @@ class ManageSlowmode(commands.Cog):
                 (channel.id, target.id, slowmode_delay, int(is_role)),
             )
         database.commit()
-        await ctx.respond(content=f"Slowmode on for <@{target.id}>", ephemeral=True)
+        await ctx.respond(content=f"Slowmode on for {target.name}")
 
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
@@ -113,7 +113,7 @@ class ManageSlowmode(commands.Cog):
             )
         database.commit()
         await bot_status.edit_original_response(
-            content=f"Slowmode off for <@{target.id}>", ephemeral=True
+            content=f"Slowmode off for {target.name}"
         )
 
     @slowmode_commands.command()
