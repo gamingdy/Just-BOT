@@ -1,5 +1,5 @@
-import time
-import json
+from json import dump
+from time import time
 
 import discord
 
@@ -16,8 +16,8 @@ bot = discord.Bot(
 async def on_ready():
     print("Bot started")
     with open("data/info.json", "w") as info:
-        data = {"boot": time.time()}
-        json.dump(data, info, indent=4)
+        data = {"boot": time()}
+        dump(data, info, indent=4)
     print("Checking users in slowmode")
     await verify_user_slowmode(bot)
     print("Checking completed")

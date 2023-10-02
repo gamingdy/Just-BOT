@@ -117,7 +117,6 @@ For more features, you can create an issue, with details about your features
 
 * ### Update:
     - ui: Show information about user in image
-    - automatic addition of a user in slowmode, if the slowmode of the role is activated
 
 
 <!-- Markdown link -->

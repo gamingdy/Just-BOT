@@ -51,6 +51,7 @@ class ErrorHandler(commands.Cog):
             traceback_error = traceback.format_exception(
                 type(error), error, error.__traceback__
             )
+
             file_name, line, command, code = get_traceback_info(traceback_error)
 
             embed_message.description = "Hi, new problem 🥳.\nAn unknown error occurred, so good luck finding the  solution 🙃. Here is the problematic command and the error."
