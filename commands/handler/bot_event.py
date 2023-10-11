@@ -1,9 +1,7 @@
-import traceback
-
 import discord
 from discord.ext import commands
 
-from Utils.funct import user_slowmode, create_embed, get_traceback_info
+from Utils.funct import user_slowmode, lowest_delay
 from config import database
 
 
@@ -13,19 +11,23 @@ class EventHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, ctx):
+        if ctx.author.bot:
+            return
         author = ctx.author
-        channel = ctx.channel
+        author_roles = [role.id for role in author.roles]
 
-        db_row = (
-            database.cursor()
-            .execute(
-                "SELECT * FROM slowmode_info WHERE channel_id=(?) AND user_id=(?)",
-                (channel.id, author.id),
+        channel = ctx.channel
+        ids = [author.id] + author_roles
+        sql_request = (
+            "SELECT delay FROM slowmode_info WHERE channel_id=(?) AND id IN {}".format(
+                tuple(ids)
             )
-            .fetchall()
         )
-        if db_row:
-            await user_slowmode(channel, author, db_row[0][2])
+        all_delay = database.cursor().execute(sql_request, (channel.id,)).fetchall()
+
+        if all_delay:
+            lowest_ = lowest_delay(all_delay)
+            await user_slowmode(channel, author, lowest_)
 
 
 class VoiceHandler(commands.Cog):

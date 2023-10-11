@@ -7,6 +7,8 @@ Just-BOT.code-workspace
 Just-BOT.sublime-project
 Just-BOT.sublime-workspace
 
+.sync
+
 __pycache__
 
 bot_db.db

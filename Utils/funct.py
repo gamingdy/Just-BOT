@@ -1,13 +1,13 @@
 import asyncio
+import json
 import os
 import sqlite3
 import time
-import json
 
 import discord
 
-from config import database
 from Utils.custom_error import NotGuildOwner
+from config import database
 
 
 def create_embed(title, description=None, color=None, image=None, thumbnail=None):
@@ -25,15 +25,27 @@ def create_embed(title, description=None, color=None, image=None, thumbnail=None
 def verify_db():
     print("Checking database tables")
     sql_request = {
-        "slowmode_info": [
-            "SELECT channel_id,user_id,delay,last_slowmode FROM slowmode_info",
-            "DROP TABLE slowmode_info",
-            """CREATE TABLE "slowmode_info" (
-                "channel_id"    INTEGER,
+        "active_slowmode": [
+            "SELECT channel_id, user_id,delay,last_slowmode FROM active_slowmode",
+            "DROP TABLE active_slowmode",
+            """
+            CREATE TABLE "active_slowmode" (
+                "channel_id"INTEGER,
                 "user_id"   INTEGER,
                 "delay" INTEGER,
                 "last_slowmode" INTEGER
             );
+            """,
+        ],
+        "slowmode_info": [
+            "SELECT channel_id,id,delay,is_role FROM slowmode_info",
+            "DROP TABLE slowmode_info",
+            """CREATE TABLE "slowmode_info" (
+                    "channel_id"    INTEGER,
+                    "id"    INTEGER,
+                    "delay" INTEGER,
+                    "is_role"   INTEGER
+                );
             """,
         ],
         "auto_voice": [
@@ -115,29 +127,51 @@ def load_cog(path, bot):
 
 async def user_slowmode(channel, user, delay):
     await channel.set_permissions(user, send_messages=False)
-    database.cursor().execute(
-        "UPDATE slowmode_info SET last_slowmode=(?) WHERE channel_id=(?) AND user_id=(?)",
-        (round(time.time()), channel.id, user.id),
-    )
+    cursor = database.cursor()
+    if is_slowmode(channel, user):
+        cursor.execute(
+            "UPDATE active_slowmode SET last_slowmode=(?), delay=(?) WHERE channel_id=(?) AND user_id=(?)",
+            (round(time.time()), delay, channel.id, user.id),
+        )
+    else:
+        cursor.execute(
+            "INSERT INTO active_slowmode (channel_id,user_id,delay,last_slowmode) VALUES (?,?,?,?)",
+            (channel.id, user.id, delay, round(time.time())),
+        )
     database.commit()
     await asyncio.sleep(delay)
     await channel.set_permissions(user, send_messages=None)
 
 
 async def verify_user_slowmode(bot):
-    my_database = database.cursor().execute("SELECT * FROM slowmode_info").fetchall()
+    my_database = database.cursor().execute("SELECT * FROM active_slowmode").fetchall()
     if my_database:
         for row in my_database:
-            if row[3]:
-                channel = bot.get_channel(row[0])
-                user = bot.get_user(row[1])
-                slowmode_delay = row[2]
-                last_slowmode = row[3]
-                actual_time = round(time.time())
-                if actual_time - slowmode_delay > last_slowmode:
-                    await user_slowmode(channel, user, 0)
-                else:
-                    await user_slowmode(channel, user, actual_time - slowmode_delay)
+            channel = bot.get_channel(row[0])
+            user = bot.get_user(row[1])
+            slowmode_delay = row[2]
+            last_slowmode = row[3]
+            actual_time = round(time.time())
+            elapsed_time = actual_time - slowmode_delay
+            if elapsed_time > last_slowmode:
+                await user_slowmode(channel, user, 0)
+            else:
+                await user_slowmode(channel, user, elapsed_time)
+
+
+def is_slowmode(channel, user):
+    in_slowmode = (
+        database.cursor()
+        .execute(
+            "SELECT * FROM active_slowmode WHERE channel_id=(?) AND user_id=(?)",
+            (channel.id, user.id),
+        )
+        .fetchone()
+    )
+
+    if in_slowmode:
+        return True
+    return False
 
 
 def get_traceback_info(traceback_error):
@@ -156,3 +190,17 @@ async def guild_owner(ctx):
     if ctx.guild.owner_id == ctx.author.id:
         return True
     raise NotGuildOwner("You are not guild owner")
+
+
+def get_active_slowmode(channel, role):
+    active_slowmodes = []
+    overwrites = channel.overwrites
+    for overwrite in overwrites:
+        if isinstance(overwrite, discord.Member):
+            if overwrite.get_role(role.id) is not None:
+                active_slowmodes.append(overwrite)
+    return active_slowmodes
+
+
+def lowest_delay(all_delay):
+    return min([delay[0] for delay in all_delay])

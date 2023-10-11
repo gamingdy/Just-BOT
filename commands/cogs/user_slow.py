@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.utils import escape_markdown
 
 from Utils.create_page import PageNavigation
-from Utils.funct import create_embed
+from Utils.funct import create_embed, get_active_slowmode
 from config import database
 
 
@@ -52,55 +52,47 @@ class ManageSlowmode(commands.Cog):
     async def enable(
         self, ctx, target: typing.Union[discord.User, discord.Role], slowmode_delay: int
     ):
-        if slowmode_delay<=0:
+        is_role = isinstance(target, discord.Role)
+        if not is_role and target.id == self.bot.user.id:
+            await ctx.respond("You can't slowmode bot")
+            return
+
+        if slowmode_delay <= 0:
             await ctx.respond("Slowmode delay must be greater than 0")
             return
-        if isinstance(target, discord.Role):
-            target_list = target.members
-        else:
-            target_list = [target]
+
         channel = ctx.channel
 
-        bot_status = await ctx.respond(
-            f"Activation of the slowmode for {len(target_list)} users..."
+        active_slowmode = (
+            database.cursor()
+            .execute(
+                "SELECT id FROM slowmode_info WHERE channel_id=(?) AND id=(?)",
+                (channel.id, target.id),
+            )
+            .fetchone()
         )
-        channel_slowmode = [
-            user_id[0]
-            for user_id in database.cursor()
-            .execute("SELECT user_id FROM slowmode_info")
-            .fetchall()
-        ]
-        for user in target_list:
-            if user.id != self.bot.user.id:
-                if user.id in channel_slowmode:
-                    database.cursor().execute(
-                        "UPDATE slowmode_info SET delay=(?) WHERE channel_id=(?) AND user_id=(?)",
-                        (slowmode_delay, channel.id, user.id),
-                    )
-                else:
-                    database.cursor().execute(
-                        "INSERT INTO slowmode_info (channel_id,user_id,delay) "
-                        "VALUES (?,?,?)",
-                        (
-                            channel.id,
-                            user.id,
-                            slowmode_delay,
-                        ),
-                    )
-            else:
-                target_list.remove(self.bot.user)
-                await ctx.send("You can't slowmode bot")
+
+        if active_slowmode:
+            database.cursor().execute(
+                "UPDATE slowmode_info SET delay=(?) WHERE channel_id=(?) AND id=(?)",
+                (slowmode_delay, channel.id, target.id),
+            )
+        else:
+            database.cursor().execute(
+                "INSERT INTO slowmode_info (channel_id,id,delay,is_role) VALUES (?,?,?,?)",
+                (channel.id, target.id, slowmode_delay, int(is_role)),
+            )
         database.commit()
-        await bot_status.edit_original_response(
-            content=f"Slowmode on for {len(target_list)} users"
-        )
+        await ctx.respond(content=f"Slowmode on for {target.name}")
 
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
     async def disable(self, ctx, target: typing.Union[discord.User, discord.Role]):
-        target_list = target.members if isinstance(target, discord.Role) else [target]
-
+        is_role = isinstance(target, discord.Role)
         channel = ctx.channel
+
+        target_list = get_active_slowmode(channel, target) if is_role else [target]
+
         bot_status = await ctx.respond(
             f"Disable slowmode for {len(target_list)} users..."
         )
@@ -108,30 +100,30 @@ class ManageSlowmode(commands.Cog):
         user_nb = 0
         prev = 0
         last_refresh = time.time()
+        database.cursor().execute(
+            "DELETE FROM slowmode_info WHERE channel_id=(?) AND id=(?)",
+            (channel.id, target.id),
+        )
         for user in target_list:
             await channel.set_permissions(user, overwrite=None)
 
-            database.cursor().execute(
-                "DELETE FROM slowmode_info WHERE channel_id=(?) AND user_id=(?)",
-                (channel.id, user.id),
-            )
             user_nb += 1
             prev, last_refresh = await self.loading_bar(
                 bot_status, user_nb / len(target_list), prev, last_refresh
             )
         database.commit()
         await bot_status.edit_original_response(
-            content=f"Slowmode off for {len(target_list)} users"
+            content=f"Slowmode off for {target.name}"
         )
 
     @slowmode_commands.command()
     @commands.has_permissions(manage_messages=True)
     async def list(self, ctx, channel: discord.TextChannel = None):
-        channel = channel or ctx.channel 
+        channel = channel or ctx.channel
         element = (
             database.cursor()
             .execute(
-                "SELECT delay,user_id,channel_id FROM slowmode_info WHERE channel_id = (?) ORDER BY delay DESC",
+                "SELECT delay,id,channel_id,is_role FROM slowmode_info WHERE channel_id = (?) ORDER BY delay DESC",
                 (channel.id,),
             )
             .fetchall()
@@ -147,15 +139,24 @@ class ManageSlowmode(commands.Cog):
             my_embed.description = f"*List of active slowmode in #{channel_name.name}*"
             all_pages = []
             for slowmode_info in element:
-                user = await self.bot.get_or_fetch_user(slowmode_info[1])
-                if user is None:
+                user_role = (
+                    await self.bot.get_or_fetch_user(slowmode_info[1])
+                    if slowmode_info[3] == 0
+                    else ctx.guild.get_role(slowmode_info[1])
+                )
+                if user_role is None:
                     continue
 
-                all_pages.append((f"Delay: {slowmode_info[0]}", escape_markdown(user.name)))
+                all_pages.append(
+                    (
+                        f"Delay: {slowmode_info[0]}",
+                        f"{escape_markdown(user_role.name)} (member)"
+                        if slowmode_info[3] == 0
+                        else f"{escape_markdown(user_role.name)} (role)",
+                    )
+                )
 
-            my_navigation = PageNavigation(
-                all_pages, my_embed, ctx.author
-            )
+            my_navigation = PageNavigation(all_pages, my_embed, ctx.author)
             await ctx.respond(embed=my_embed, view=my_navigation)
         else:
             my_embed.description = "**No slowmode users in this channel**"
